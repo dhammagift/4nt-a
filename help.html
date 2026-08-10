@@ -1,0 +1,1623 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help — s.4nt.org</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf8f4;--border:#ddd6c8;--text:#000;--muted:#6b6055;--accent:#5c3d1e;
+  --sec-bg:#f0ebe0;--sec-border:#c8b89a;--line:#c8b89a;--sidebar-bg:#f2ece0;
+  --toc-hover:#e8dfc8;--toc-act:#e0d4b8;--key:#9c8060;--head:#f0ebe0;
+  --header-bg:#5c3d1e;--header-text:#f5ede0;
+  --hh:50px;--sw:248px;
+}
+[data-theme="dark"]{
+  --bg:#000;--border:#3a3028;--text:#e8dfc8;--muted:#9a8878;--accent:#c8a060;
+  --sec-bg:#231e18;--sec-border:#4a3c2c;--line:#4a3c2c;--sidebar-bg:#1c1810;
+  --toc-hover:#2a2418;--toc-act:#322a1c;--key:#9a7850;--head:#2a2418;
+  --header-bg:#241c10;--header-text:#e8d8b8;
+}
+html{font-size:15px}
+body{font-family:Georgia,serif;background:var(--bg);color:var(--text);
+  line-height:1.7;transition:background .2s,color .2s}
+
+/* ── HEADER (mirrors the sutta viewer's dark nav) ── */
+header{position:fixed;top:0;left:0;right:0;height:var(--hh);z-index:300;
+  display:flex;align-items:stretch;background:var(--header-bg);color:var(--header-text);
+  box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.site-logo{flex-shrink:0;width:var(--hh);height:var(--hh);display:block;overflow:hidden;
+  opacity:.75;transition:opacity .15s;border-right:1px solid rgba(0,0,0,.2)}
+.site-logo:hover{opacity:1}
+.site-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.nav-r1{flex:1;display:flex;align-items:center;gap:.4rem;padding:0 .7rem;min-width:0}
+.page-title{font-size:1rem;letter-spacing:.02em;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;margin:0 .3rem}
+.icon-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;
+  border-radius:4px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);
+  color:var(--header-text);cursor:pointer;font-size:.9rem;transition:background .15s;
+  flex-shrink:0;text-decoration:none}
+.icon-btn:hover{background:rgba(255,255,255,.2)}
+.icon-btn.on{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5)}
+
+/* ⚙ settings popover (light card on the dark header) */
+.settings-wrap{position:relative;display:flex;align-items:center}
+.settings-pop{position:absolute;top:120%;right:0;z-index:500;display:none;min-width:12rem;
+  padding:.5rem .6rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.settings-pop.show{display:block}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.3rem 0}
+.set-row + .set-row{border-top:1px solid var(--border)}
+.set-lbl{font-size:.78rem;font-family:sans-serif;color:var(--text);white-space:nowrap}
+.set-ctl{display:flex;align-items:center;gap:.25rem}
+.settings-pop .icon-btn{width:auto;min-width:28px;padding:0 .45rem;color:var(--text);
+  border-color:var(--sec-border);background:var(--sec-bg)}
+.settings-pop .icon-btn:hover{background:var(--toc-hover)}
+
+/* 🐇 quick-jump — 🐇 button in the bar, input revealed in a dropdown */
+.jump{position:relative;display:flex;align-items:center}
+.jump-pop{position:absolute;top:115%;left:0;z-index:500;display:none;min-width:13rem;
+  padding:.5rem .55rem;background:var(--bg);color:var(--text);
+  border:1px solid var(--sec-border);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.jump-pop.show{display:block}
+.jump-box{position:relative;display:flex;align-items:center}
+.jump-input{width:100%;box-sizing:border-box;padding:.34rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);color:var(--text);
+  font-family:monospace;font-size:.85rem}
+.jump-input::placeholder{color:var(--muted);opacity:.7}
+.jump-input:focus{outline:none;border-color:var(--accent)}
+.jump-input.bad{border-color:#c0392b;background:rgba(192,57,43,.12)}
+.jump-msg{margin-top:.4rem;background:#b03030;color:#fff;font-family:sans-serif;
+  font-size:.72rem;padding:.28rem .55rem;border-radius:4px;display:none}
+.jump-msg.show{display:block}
+.jump-hist{margin-top:.4rem;max-height:50vh;overflow-y:auto;display:none}
+.jump-hist.show{display:block}
+.jump-hist div{padding:.3rem .5rem;font-family:monospace;font-size:.8rem;cursor:pointer;border-radius:4px}
+.jump-hist div:hover{background:var(--toc-hover)}
+
+/* ── SIDEBAR + TOC ── */
+.sidebar{position:fixed;top:var(--hh);left:0;bottom:0;width:var(--sw);z-index:200;
+  overflow-y:auto;overflow-x:hidden;background:var(--sidebar-bg);
+  border-right:1px solid var(--sec-border);transition:transform .22s ease,background .2s}
+.sidebar.hidden{transform:translateX(-100%)}
+.sidebar::-webkit-scrollbar{width:5px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--sec-border);border-radius:2px}
+.toc-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:.3rem;
+  padding:.4rem .6rem;background:var(--sec-bg);border-bottom:1px solid var(--sec-border)}
+.toc-bar-label{flex:1;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);font-weight:600;font-family:sans-serif}
+.toc-bar-btn{flex-shrink:0;width:22px;height:22px;display:flex;align-items:center;
+  justify-content:center;border:1px solid var(--sec-border);border-radius:50%;background:var(--bg);
+  color:var(--accent);cursor:pointer;font-size:.85rem;font-family:monospace;font-weight:bold;line-height:1}
+.toc-bar-btn:hover{background:var(--toc-hover);border-color:var(--accent)}
+.toc{padding:.5rem .55rem 2rem;font-family:sans-serif}
+.toc-tree,.toc-tree ul{list-style:none;margin:0;padding:0}
+.toc-tree ul{padding-left:.7rem;border-left:1px solid var(--line);margin-left:.3rem}
+.toc-tree li{margin:.06rem 0}
+.toc-tree a{display:block;padding:.2rem .4rem;border-radius:4px;text-decoration:none;
+  color:var(--text);font-size:.78rem;line-height:1.3}
+.toc-tree a.toc-leaf{color:var(--muted);font-size:.75rem}
+.toc-tree a:hover{background:var(--toc-hover);color:var(--accent)}
+.toc-node > summary{list-style:none;cursor:pointer;display:flex;align-items:center}
+.toc-node > summary::-webkit-details-marker{display:none}
+.toc-node > summary::before{content:"▸";color:var(--accent);font-size:.7rem;width:.9rem;
+  flex-shrink:0;transition:transform .12s;text-align:center}
+.toc-node[open] > summary::before{transform:rotate(90deg)}
+.toc-node > summary a{flex:1}
+
+/* ── CONTENT (the guide prose) ── */
+.guide{margin-left:var(--sw);margin-top:var(--hh);padding:2rem 2rem 1rem;
+  max-width:52rem;transition:margin-left .22s}
+.guide.full{margin-left:0}
+.guide h1{font-size:1.7rem;font-weight:normal;letter-spacing:.02em;color:var(--accent);
+  margin:0 0 .6rem;line-height:1.3}
+.guide h2{font-size:1.25rem;font-weight:normal;color:var(--accent);margin:2rem 0 .6rem;
+  padding-bottom:.25rem;border-bottom:1px solid var(--border)}
+.guide h3{font-size:1.02rem;color:var(--text);margin:1.4rem 0 .4rem}
+.guide p{margin:.7rem 0}
+.guide ul,.guide ol{margin:.6rem 0 .6rem 1.4rem}
+.guide li{margin:.3rem 0}
+.guide a{color:var(--accent);text-decoration:none}
+.guide a:hover{text-decoration:underline}
+.guide code{font-family:ui-monospace,Consolas,monospace;font-size:.86em;background:var(--head);
+  padding:.08em .35em;border-radius:4px}
+.guide hr{border:none;border-top:1px solid var(--border);margin:1.8rem 0}
+.guide blockquote{margin:1rem 0;padding:.4rem 1rem;border-left:3px solid var(--sec-border);
+  color:var(--muted);font-style:italic}
+.guide table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.92rem}
+.guide th,.guide td{border:1px solid var(--border);padding:.45rem .7rem;text-align:left;vertical-align:top}
+.guide th{background:var(--head);font-weight:600}
+.guide :target{scroll-margin-top:calc(var(--hh) + 12px)}
+.guide h1,.guide h2,.guide h3{scroll-margin-top:calc(var(--hh) + 12px)}
+
+/* shared footer (footer.py) + viewer-style positioning (aligns with content) */
+.site-footer{padding:1.4rem 1.8rem;border-top:1px solid var(--border);
+  background:var(--head,var(--sec-bg));color:var(--muted);font-family:sans-serif;
+  font-size:.74rem;display:flex;align-items:center;justify-content:space-between;gap:1.6rem}
+.ft-logo{flex-shrink:0;display:block}
+.ft-logo img{height:64px;width:auto;border-radius:10px;display:block}
+.ft-text{flex:1;text-align:center;line-height:1.55;min-width:0}
+.ft-tagline{margin:0;color:var(--text)}
+.ft-links{margin:.45rem 0 0;display:flex;justify-content:center;flex-wrap:wrap;
+  gap:.3rem .9rem;font-family:sans-serif}
+.ft-links a{color:var(--accent);text-decoration:none}
+.ft-links a:hover{text-decoration:underline}
+.ft-copy{margin:.45rem 0 0;opacity:.8}
+
+.site-footer{margin-left:var(--sw);transition:margin-left .22s}
+.site-footer.full{margin-left:0}
+
+@media (max-width:820px){
+  .guide{padding:1.4rem 1.1rem 1rem}
+}
+</style>
+
+<script src="./extra/extra.js"></script>
+
+<meta name="description" content="3 National Pali Canon Editions With Line by Line translations">
+<meta property="og:title" content="4nt DG">
+<meta property="og:description" content="3 National Pali Canon Editions With Line by Line translations">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4nt DG">
+<meta name="twitter:description" content="3 National Pali Canon Editions With Line by Line translations">
+<style>
+    img[src*="headerlogo.png"] { background-color: #ede5d4; padding: 4px; border-radius: 10px; border: 1px solid var(--bar-border); }
+    .home-logo img, img.home-logo { width: 16px; }
+</style></head>
+<body>
+
+<header id="mainHeader">
+  <a class="site-logo" href="index.html" title="Home — s.4nt.org">
+    <img src="/assets/img/headerlogo.png" alt="s.4nt.org home — Suttas, Side by Side">
+  </a>
+  <div class="nav-r1">
+    <button class="icon-btn" id="tocBtn" title="Toggle table of contents" onclick="toggleHelpSidebar()">☰</button>
+    <span class="page-title">Help — Reading Guide</span>
+    <span style="flex:1"></span>
+    <div class="jump" id="jump">
+      <button class="icon-btn" id="jumpBtn" title="Jump to any sutta:
+• Click 🐇 (or press / anywhere) to open the jump box
+• Type a ref and press Enter — e.g. mn125, an3.65, dhp1
+• Jump to an outline section (L24) — e.g. mn125.2.3
+• A numbered vagga keeps its dot — dhp2. is Dhp's 2nd vagga, dhp2 its 2nd verse
+• Add a segment to land right on it — e.g. mn125:2.5
+• On a page, drop its name — 8.4.16 (L24) or :2.5 (segment) stays here
+• Taishō texts are t0614 — with a section, t0614.1.6.3
+• Shortcuts: home, major, abhi, taisho614
+• Link straight to a ref — put ?q=mn125 on any page's URL
+• Your recent jumps show while the box is empty">🐇</button>
+      <div class="jump-pop" id="jumpPop">
+        <span class="jump-box">
+          <input class="jump-input" id="jumpInput" placeholder="mn125, dn16:2.5…" autocomplete="off" spellcheck="false" type="search">
+        </span>
+        <div class="jump-msg" id="jumpMsg"></div>
+        <div class="jump-hist" id="jumpHist"></div>
+      </div>
+    </div>
+    <button class="icon-btn" id="topBtn" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="display: none;">🔝</button>
+    <!-- id is REQUIRED: sitebar.PREFS_JS's document-level click handler closes this
+         popover unless the click is inside #siteSettingsWrap, so without the id the
+         opening click closed it again and ⚙ looked dead (font/theme unreachable). -->
+    
+                <a class="voice-link icon-btn" id="voiceLinkBtn" data-slug="help" href="javascript:void(0)" title="Listen (TTS)">🔊</a>
+                <a class="icon-btn" id="viewModeBtn" onclick="window.toggleViewMode()" href="javascript:void(0)" title="View: Columns / Scroll">📜</a>
+                <a class="icon-btn" id="fdg-button" href="https://f.dhamma.gift/read/?q=help" title="Search Suttas (Ctrl+1)" rel="noreferrer">
+                    <img style="width:18px; height:18px; display:block;" src="/assets/img/gray-white.png" alt="Search">
+                </a>
+                <a class="icon-btn toggle-dict-btn" title="Popup Dictionary (Alt+A)">
+                    <img style="width:18px; height:18px; display:block;" src="/assets/svg/comment.svg" alt="Dictionary">
+                </a><div class="settings-wrap" id="siteSettingsWrap">
+      <button class="icon-btn" id="siteSettingsBtn" title="Settings" onclick="siteToggleSettings()">⚙</button>
+      <div class="settings-pop" id="siteSettingsPop">
+        <div class="set-row">
+          <span class="set-lbl">Text size</span>
+          <span class="set-ctl">
+            <button class="icon-btn" title="Decrease font size" onclick="siteAdjustFont(-1)">A−</button>
+            <button class="icon-btn" title="Increase font size" onclick="siteAdjustFont(+1)">A+</button>
+          </span>
+        </div>
+        <div class="set-row">
+          <span class="set-lbl">Theme</span>
+          <button class="icon-btn" id="siteThemeBtn" title="Toggle dark / light mode" onclick="siteToggleTheme()">☀ Light</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="sidebar" id="sidebar">
+  <div class="toc-bar">
+    <span class="toc-bar-label">Contents</span>
+    <button class="toc-bar-btn" title="Collapse all" onclick="tocSetAll(false)">−</button>
+    <button class="toc-bar-btn" title="Expand all" onclick="tocSetAll(true)">+</button>
+  </div>
+  <div class="toc"><ul class="toc-tree"><li><a class="toc-leaf" href="#what-youre-looking-at">What you're looking at</a></li><li><details class="toc-node" open=""><summary><a href="#the-columns">The columns</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#switching-translations">Switching translations</a></li><li><a class="toc-leaf" href="#reordering-columns">Reordering columns</a></li><li><a class="toc-leaf" href="#adding-and-removing-columns">Adding and removing columns</a></li></ul></details></li><li><details class="toc-node" open=""><summary><a href="#navigation">Navigation</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#table-of-contents">Table of contents</a></li><li><a class="toc-leaf" href="#copy-contents">Copy contents</a></li><li><details class="toc-node" open=""><summary><a href="#sutta-ref">Sutta ref</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#l24-ref-mn12543">L24 ref — mn125.4.3</a></li><li><a class="toc-leaf" href="#sc-ref-mn12543">SC ref — mn125:4.3</a></li><li><a class="toc-leaf" href="#vinaya-root-commentary-subcommentary">Vinaya — root, commentary, subcommentary</a></li></ul></details></li><li><a class="toc-leaf" href="#the-ebt-button">The ‖ EBT button</a></li><li><details class="toc-node" open=""><summary><a href="#quick-jump-box">Quick-jump box</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#site-shortcuts">Site shortcuts</a></li><li><a class="toc-leaf" href="#jump-to-a-text">Jump to a text</a></li><li><a class="toc-leaf" href="#land-on-a-specific-place">Land on a specific place</a></li><li><a class="toc-leaf" href="#staying-on-the-current-page">Staying on the current page</a></li><li><a class="toc-leaf" href="#linking-straight-to-a-ref-q">Linking straight to a ref — ?q=</a></li></ul></details></li><li><a class="toc-leaf" href="#in-text-navigation">In-text navigation</a></li></ul></details></li><li><details class="toc-node" open=""><summary><a href="#footnotes">Footnotes</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#opening-a-footnote">Opening a footnote</a></li><li><a class="toc-leaf" href="#working-with-the-panel">Working with the panel</a></li><li><a class="toc-leaf" href="#resizing-the-footnote-panel">Resizing the footnote panel</a></li></ul></details></li><li><a class="toc-leaf" href="#display-settings">⚙ Display settings</a></li><li><a class="toc-leaf" href="#the-sutta-index">The sutta index</a></li><li><a class="toc-leaf" href="#reading-offline">Reading offline</a></li><li><details class="toc-node" open=""><summary><a href="#translations-available">Translations available</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#pts-unmapped-suttas">PTS — unmapped suttas</a></li><li><a class="toc-leaf" href="#proofreading-verbatim-validation">Proofreading &amp; verbatim validation</a></li><li><a class="toc-leaf" href="#dhammagift">Русский (Dhamma.gift)</a></li><li><a class="toc-leaf" href="#sujato_corrected">Sujato_corrected</a></li><li><a class="toc-leaf" href="#pali-editions">Pāli Editions</a></li><li><details class="toc-node" open=""><summary><a href="#ai-translations">AI Translations</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#bodhi-esque">Bodhi-esque</a></li><li><a class="toc-leaf" href="#arabic-esque">Arabic-esque</a></li><li><a class="toc-leaf" href="#chinese-esque">Chinese-esque</a></li><li><a class="toc-leaf" href="#deepseek-line-by-line">DeepSeek — Line by Line</a></li><li><a class="toc-leaf" href="#deepseek-v4-flash-paragraph-chunking">DeepSeek — V4 Flash (Paragraph Chunking)</a></li><li><details class="toc-node" open=""><summary><a href="#standard-disclaimers-apply">Standard Disclaimers Apply</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#why-allow-ai-translations-at-all">Why Allow AI Translations At All?</a></li></ul></details></li></ul></details></li></ul></details></li><li><details class="toc-node" open=""><summary><a href="#ebtlbt-classification-legend">EBT/LBT Classification Legend</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#explanation">Explanation</a></li><li><a class="toc-leaf" href="#the-four-categories">The Four Categories</a></li><li><a class="toc-leaf" href="#note-on-terminology">Note on Terminology</a></li><li><details class="toc-node" open=""><summary><a href="#why-include-malignant-material-at-all">Why Include Malignant Material at All?</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#canonical-precedent-suttas-that-contrast-wrong-and-right">Canonical Precedent: Suttas That Contrast Wrong and Right</a></li></ul></details></li></ul></details></li><li><details class="toc-node" open=""><summary><a href="#theravada-atthakatha-tika-chronology">Theravāda Aṭṭhakathā &amp; Ṭīkā Chronology</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#overview-timeline">Overview Timeline</a></li><li><a class="toc-leaf" href="#early-sinhala-atthakatha-lost">Early Sinhala Aṭṭhakathā (Lost)</a></li><li><details class="toc-node" open=""><summary><a href="#buddhaghosa-the-classical-pali-atthakatha">Buddhaghosa &amp; the Classical Pali Aṭṭhakathā</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#buddhaghosa">Buddhaghosa</a></li></ul></details></li><li><details class="toc-node" open=""><summary><a href="#dhammapala-later-atthakatha">Dhammapāla &amp; Later Aṭṭhakathā</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#dhammapala">Dhammapāla</a></li></ul></details></li><li><details class="toc-node" open=""><summary><a href="#tika-subcommentaries">Ṭīkā (Subcommentaries)</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#early-tika">Early Ṭīkā</a></li><li><a class="toc-leaf" href="#classical-tika-period">Classical Ṭīkā Period</a></li></ul></details></li><li><a class="toc-leaf" href="#simplified-timeline">Simplified Timeline</a></li><li><details class="toc-node" open=""><summary><a href="#scholarly-sources">Scholarly Sources</a></summary><ul class="toc-tree"><li><a class="toc-leaf" href="#oskar-von-hinuber">Oskar von Hinüber</a></li><li><a class="toc-leaf" href="#k-r-norman">K. R. Norman</a></li><li><a class="toc-leaf" href="#a-k-warder">A. K. Warder</a></li><li><a class="toc-leaf" href="#rupert-gethin">Rupert Gethin</a></li><li><a class="toc-leaf" href="#g-p-malalasekera">G. P. Malalasekera</a></li><li><a class="toc-leaf" href="#bhikkhu-nanamoli">Bhikkhu Ñāṇamoli</a></li></ul></details></li><li><a class="toc-leaf" href="#summary">Summary</a></li></ul></details></li><li><a class="toc-leaf" href="#tips-for-comparative-study">Tips for comparative study</a></li><li><a class="toc-leaf" href="#about">About</a></li><li><a class="toc-leaf" href="#legal">Legal</a></li></ul></div>
+</nav>
+
+<main class="content guide" id="main">
+<h1 id="s4ntorg-suttas-side-by-side-help">s.4nt.org — Suttas, Side by Side · Help</h1>
+<p>A reading guide for the parallel sutta viewer at <strong>s.4nt.org</strong>.</p>
+<hr>
+<h2 id="what-youre-looking-at">What you're looking at</h2>
+<p>Each sutta page displays the original Pāli alongside one or more English translations in <strong>side-by-side columns</strong>,<br>
+aligned segment by segment.<br>
+The columns scroll together, so the same passage is always at the same height across all translations.</p>
+<hr>
+<h2 id="the-columns">The columns</h2>
+<h3 id="switching-translations">Switching translations</h3>
+<p>Each column has a <strong>dropdown at the top</strong> showing the current translator's name.<br>
+Click it to swap that column for a different translation — for example,<br>
+switch the right column from Sujato to Thanissaro, or back to Pāli.</p>
+<h3 id="reordering-columns">Reordering columns</h3>
+<p>Columns can be <strong>dragged left or right</strong>.<br>
+Grab the small grip icon (⠿) in a column header and drag it to the position you want.<br>
+The reading layout adjusts instantly.</p>
+<h3 id="adding-and-removing-columns">Adding and removing columns</h3>
+<ul>
+<li>Click the <strong>+</strong> button at the far right of the column bar to add a new column.</li>
+<li>Click the <strong>×</strong> on any column header to remove it.</li>
+</ul>
+<p>A typical starting layout is Pāli + one English translation.<br>
+You can expand to three (or more) columns to compare multiple translators directly.</p>
+<hr>
+<h2 id="navigation">Navigation</h2>
+<h3 id="table-of-contents">Table of contents</h3>
+<p>The <strong>☰ button</strong> (top left) opens and closes the table of contents sidebar.<br>
+It shows every section of the sutta — you can click any entry to jump there instantly.</p>
+<p>Within the sidebar:
+- The <strong>−</strong> and <strong>+</strong> buttons at the top collapse or expand all sections at once.
+- Individual sections can be folded with the small triangle button beside each heading.
+- <strong>Resize the sidebar:</strong> drag the vertical divider on its right edge (just left of the ☰ button) to make the table of contents wider or narrower. The width is remembered across pages.
+- <strong>Scrolling the list:</strong> hover over the contents and use your mouse wheel, or drag the scrollbar on its right edge.</p>
+<h3 id="copy-contents">Copy contents</h3>
+<p>On a text with a curated <strong>L24 outline</strong> (the numbered sections in the table of contents),<br>
+the <strong>⋮ More</strong> menu offers <strong>📋 Copy contents</strong>.<br>
+It copies the whole outline to your clipboard as formatted HTML.</p>
+<p>Paste it into a <strong>rich-text editor</strong> — Google Docs, Word, WordPress,<br>
+an email — and it arrives as a properly <strong>indented table of contents</strong>:<br>
+the sutta title at the top (linking to the page),<br>
+then each heading nested under its parent, every entry a link back to that section here.<br>
+Paste into a <strong>plain-text editor</strong> instead and you get a clean tab-indented outline.</p>
+<p>You'll only see this on outline texts;<br>
+a plain segment-numbered page (no curated sections) doesn't show it.</p>
+<h3 id="sutta-ref">Sutta ref</h3>
+<p>A passage can be addressed in two different notations.<br>
+They look almost identical — the separator is the only difference — but they mean different things.</p>
+<h4 id="l24-ref-mn12543">L24 ref — <code>mn125.4.3</code></h4>
+<p>An <strong>all-dots</strong> address (<code>.</code> throughout).<br>
+This is <em>lucid24's own</em> reference system:<br>
+a curated, human-facing outline of a text — chapters, sections,<br>
+and sub-sections that an editor has chosen and numbered for study.<br>
+On a text that has an L24 system (for example the Visuddhimagga,<br>
+where <code>8.4.16</code> is the sixteen-step ānāpānassati discussion),<br>
+these are the entries you see in the table of contents, and each one is a clickable anchor — <code>…  
+/index.html#8.4.16</code> lands on it.</p>
+<h4 id="sc-ref-mn12543">SC ref — <code>mn125:4.3</code></h4>
+<p>A <strong>colon</strong> before the last number (<code>nik&lt;n&gt;:&lt;paragraph&gt;.&lt;segment&gt;</code>).<br>
+This is <em>SuttaCentral's</em> segment id — the canonical,<br>
+machine-assigned coordinate of one exact line of source text, the same id used across SuttaCentral and Bilara.<br>
+It always points at a single segment, whatever the editorial outline happens to be.</p>
+<p><strong>The difference in one line:</strong> the L24 dot-ref is an <em>editorial</em> address (where a passage sits in a curated reading outline);<br>
+the SC colon-ref is a <em>source</em> address (which exact segment of the canonical text it is).<br>
+One text can carry both — the same line is, say, L24 <code>8.4.16.3</code> and SC <code>vism8:220.1</code>.<br>
+The dot-ref is stable to how a reader navigates;<br>
+the colon-ref is stable to the source.</p>
+<h4 id="vinaya-root-commentary-subcommentary">Vinaya — root, commentary, subcommentary</h4>
+<p>The Vinaya's three layers share <strong>one</strong> numbering, so a passage keeps its address as you move between them:<br>
+take the root's address and add <code>-a</code> for the commentary, <code>-t</code> for the subcommentary.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Ref</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Root (mūla)</td>
+<td>SuttaCentral id</td>
+<td><code>pli-tv-bu-vb-np1</code>, <code>pli-tv-kd1</code>, <code>pli-tv-pvr7</code></td>
+</tr>
+<tr>
+<td>Commentary — Samantapāsādikā</td>
+<td>+ <code>-a</code></td>
+<td><code>pli-tv-bu-vb-np1-a</code></td>
+</tr>
+<tr>
+<td>Subcommentary — Sāratthadīpanī</td>
+<td>+ <code>-t</code></td>
+<td><code>pli-tv-bu-vb-np1-t</code></td>
+</tr>
+<tr>
+<td>One line of any layer</td>
+<td>+ <code>:&lt;paragraph&gt;.&lt;segment&gt;</code></td>
+<td><code>pli-tv-bu-vb-np1-a:6.2</code></td>
+</tr>
+</tbody>
+</table>
+<p>That works because the commentary has <strong>no numbering of its own</strong>.<br>
+Every block of the Samantapāsādikā opens with the <strong>mūla paragraph number</strong> it expounds — <code>459.</code>,<br>
+or a range like <code>44-9.</code> — and that is exactly the paragraph number SuttaCentral publishes on the root segments.<br>
+So the number at the head of a commentary paragraph <em>is</em> the root paragraph it is about,<br>
+and the Sāratthadīpanī anchors to the same series:<br>
+all three layers agree on one number.</p>
+<p>Two consequences worth knowing:</p>
+<ul>
+<li>The commentary is <strong>selective</strong>. It anchors about 1,400 blocks against the Vinaya's 3,340 paragraphs, so a root paragraph with no block of its own is covered by the preceding one — in the Parivāra one stretch of 153 paragraphs sits under a single anchor. Six root pages have no commentary at all: the two Pātimokkhas (whose commentary is a separate work, the Kaṅkhāvitaraṇī), Parivāra 2 and 5, and the nuns' sekhiya and adhikaraṇasamatha.</li>
+<li>The Samantapāsādikā's long opening — the Bāhiranidāna, on the three councils and the mission to Laṅkā — expounds no rule, so it has no root page to sit beside. It gets its own: <code>pli-tv-vi-a-pre</code>.</li>
+</ul>
+<h3 id="the-ebt-button">The ‖ EBT button</h3>
+<p>On grouped-nikāya pages (AN, SN, …)<br>
+a sutta header may carry a small <strong>‖ EBT</strong> button.<br>
+Click it for two kinds of cross-reference, shown in a popup (the numbers never clutter the header itself):</p>
+<ul>
+<li><strong>EBT parallels</strong> — early-Buddhist-text parallels to this sutta in other collections: <em>full parallels</em> and <em>resembling passages</em>, each a clickable link.</li>
+<li><strong>Pāli-edition sutta number (where it diverges)</strong> — where a printed Pāli edition numbers this sutta differently from SuttaCentral, that edition's own reference is listed (e.g. <strong>Siam 20.127–128</strong>, the Royal Thai Tipiṭaka). Only editions whose numbering actually diverges appear; at present that is the Siam (Royal Thai) edition.</li>
+</ul>
+<p>A sutta shows the button if it has either.<br>
+It's the same affordance you'll find on the collection index pages.</p>
+<h3 id="quick-jump-box">Quick-jump box</h3>
+<p>The <strong>search box</strong> in the top bar (open it with the 🐇 button or by pressing <code>/</code>) takes a ref or a shortcut word, then <strong>Enter</strong>.<br>
+Your recent jumps are saved and shown as a dropdown while the box is empty.<br>
+It understands everything below.</p>
+<h4 id="site-shortcuts">Site shortcuts</h4>
+<p>Bare words that jump to a landing page (a leading slash is optional, so <code>home</code> and <code>/home</code> are the same):</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Goes to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>home</code></td>
+<td>The homepage</td>
+</tr>
+<tr>
+<td><code>major</code></td>
+<td>The major-texts page</td>
+</tr>
+<tr>
+<td><code>abhi</code></td>
+<td>The Abhidhamma / Abhidharma index (Theravāda + Sarvāstivāda)</td>
+</tr>
+<tr>
+<td><code>taisho</code></td>
+<td>The Taishō catalogue index</td>
+</tr>
+<tr>
+<td><code>taisho614</code></td>
+<td>A Taishō text by number — here T0614 (leading zeros optional, so <code>taisho0614</code> works too; T0613 and T0615–T0617 answer to <code>taisho613</code>, <code>taisho615</code>, … the same way)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="jump-to-a-text">Jump to a text</h4>
+<p>The address form depends on how a collection is organised.<br>
+In every case you can leave the numeric part off a book-level ref to land on that page's top.</p>
+<table>
+<thead>
+<tr>
+<th>Collection</th>
+<th>Form</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flat nikāya (one page per sutta)</td>
+<td><code>&lt;nik&gt;&lt;n&gt;</code></td>
+<td><code>mn10</code>, <code>dn22</code>, <code>ma100</code>, <code>da1</code></td>
+</tr>
+<tr>
+<td>Grouped nikāya (one page per book; sutta is an anchor)</td>
+<td><code>&lt;nik&gt;&lt;book&gt;.&lt;sutta&gt;</code></td>
+<td><code>an3.65</code>, <code>sn22.59</code>, <code>ea2.65</code></td>
+</tr>
+<tr>
+<td>Saṃyukta Āgama (numeric-range page)</td>
+<td><code>sa&lt;n&gt;</code></td>
+<td><code>sa42</code></td>
+</tr>
+<tr>
+<td>Khuddaka book (one page per book)</td>
+<td><code>&lt;abbr&gt;&lt;n&gt;[.sub]</code></td>
+<td><code>dhp1</code>, <code>ud1.1</code></td>
+</tr>
+<tr>
+<td>Abhidhamma book</td>
+<td><code>&lt;abbr&gt;&lt;n&gt;</code></td>
+<td><code>vb1</code></td>
+</tr>
+<tr>
+<td>Single-file text</td>
+<td><code>&lt;nik&gt;&lt;n&gt;</code></td>
+<td><code>arv12</code>, <code>vimt8</code></td>
+</tr>
+<tr>
+<td>Vinaya</td>
+<td>SuttaCentral id</td>
+<td><code>pli-tv-kd1</code>, <code>pli-tv-bu-vb-pj1</code></td>
+</tr>
+<tr>
+<td>Commentary / subcommentary (<code>-a</code> / <code>-t</code>)</td>
+<td><code>&lt;nik&gt;-a&lt;n&gt;</code></td>
+<td><code>mn-a1</code>, <code>an-a3.65</code>, <code>vism17</code></td>
+</tr>
+<tr>
+<td>Vinaya commentary / subcommentary</td>
+<td><code>&lt;root id&gt;-a</code> / <code>-t</code></td>
+<td><code>pli-tv-bu-vb-np1-a</code>, <code>pli-tv-kd1-a</code>, <code>pli-tv-vi-a-pre</code></td>
+</tr>
+<tr>
+<td>Jātaka commentary</td>
+<td><code>ja-a&lt;n&gt;</code></td>
+<td><code>ja-a265</code></td>
+</tr>
+</tbody>
+</table>
+<p>(A ref only lands somewhere if that text has been published;<br>
+otherwise the box flags it.)</p>
+<h4 id="land-on-a-specific-place">Land on a specific place</h4>
+<p>Add a coordinate to any text ref to land inside it:</p>
+<ul>
+<li>An <strong>SC ref</strong> (colon) — the source segment: <code>mn10:2.5</code>, <code>an3.65:2.4</code>.</li>
+<li>An <strong>L24 ref</strong> (dots) — a curated outline section, on texts that have one: <code>mn125.2.3</code>, <code>vism8.4.16</code>.</li>
+</ul>
+<h4 id="staying-on-the-current-page">Staying on the current page</h4>
+<p>You don't have to retype the work's own name.<br>
+On the page you're reading, a bare <strong>L24 ref</strong> jumps to that section — type <code>8.4.16</code>, not <code>vism8.4.16</code> —<br>
+and an <strong>SC ref</strong> jumps to that segment — type <code>:2.5</code> (or,<br>
+on a multi-chapter work like the Visuddhimagga, keep the chapter:<br>
+<code>8:216.1</code>), not the full <code>vism8:216.1</code>.<br>
+The full, name-qualified forms above still work everywhere (and are what you need to jump to a <em>different</em> text).</p>
+<h4 id="linking-straight-to-a-ref-q">Linking straight to a ref — <code>?q=</code></h4>
+<p>Any page on the site also takes a ref <strong>in the URL</strong>, written <code>?q=&lt;ref&gt;</code>,<br>
+and jumps to it as the page loads — the link does the typing for you.<br>
+It accepts exactly what the box accepts,<br>
+which means a citation can be linked without knowing which page the passage lives on:<br>
+the site works that out from the ref itself.</p>
+<table>
+<thead>
+<tr>
+<th>Link</th>
+<th>Lands on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>s.4nt.org/?q=mn125</code></td>
+<td>MN 125, at the top of the sutta</td>
+</tr>
+<tr>
+<td><code>s.4nt.org/?q=mn125:4.3</code></td>
+<td>one exact segment of the source (<a href="#sc-ref-mn12543">SC ref</a>)</td>
+</tr>
+<tr>
+<td><code>s.4nt.org/?q=vism8.4.16</code></td>
+<td>one section of a curated outline (<a href="#l24-ref-mn12543">L24 ref</a>)</td>
+</tr>
+<tr>
+<td><code>s.4nt.org/?q=mn-a125</code></td>
+<td>the commentary on MN 125</td>
+</tr>
+<tr>
+<td><code>s.4nt.org/?q=home</code></td>
+<td>a shortcut word, same as typing it</td>
+</tr>
+</tbody>
+</table>
+<p>The ref can be written in any of three conventions, and a link may use whichever one the passage is normally cited in:</p>
+<ul>
+<li><strong>SuttaCentral segment ids</strong> — the colon form, <code>mn125:4.3</code>, addressing one exact line of source text. This is SuttaCentral's own numbering, the same id their site puts after the <code>#</code> in a URL, and it is described in full under <a href="#sc-ref-mn12543">SC ref</a>.</li>
+<li><strong>lucid24.org outline addresses</strong> — all dots, no colon: <code>vism8.4.16</code>, <code>mn125.2.3</code>. These are lucid24's curated study outline rather than a source coordinate — see <a href="#l24-ref-mn12543">L24 ref</a>. A text only answers to one if its outline has been published here.</li>
+<li><strong>DPR abbreviations</strong> — the <code>-a</code> (commentary) and <code>-t</code> (subcommentary) names used by the Digital Pali Reader: <code>mn-a125</code>, <code>an-a3.65</code>, <code>dhp-a163</code>, <code>snp-a5.3</code>. These matter most for the commentarial layers, which SuttaCentral largely does not carry, so a DPR-style abbreviation is often the only ref a passage has.</li>
+</ul>
+<p>One thing to know about the commentarial refs:<br>
+their numbering here has in places been <strong>re-synced onto SuttaCentral's</strong>,<br>
+so that a commentary ref lines up with the root passage it comments on. <code>snp5.3</code> and <code>snp-a5.3</code> are the same verse,<br>
+and <code>dhp-a163</code> is the story on Dhammapada verse 163 —<br>
+even where the source edition numbers that story differently (in the Pāli it is the 133rd).<br>
+So you can usually take a root ref, add <code>-a</code>, and get its commentary.</p>
+<p>Two conveniences worth knowing:</p>
+<ul>
+<li>Your browser will treat it as a search engine. Register <code>https://s.4nt.org/?q=%s</code> as a custom search keyword and you can type a ref into the address bar to open the passage.</li>
+<li>The <code>?q=</code> part removes itself from the address bar once it has done its work, so the URL you copy afterwards is the plain anchor to where you actually are.</li>
+</ul>
+<h3 id="in-text-navigation">In-text navigation</h3>
+<p>Click any <strong>section heading</strong> in the main text to scroll it into view.<br>
+Each row also has a subtle highlight on hover so you can track which verse the translator notes refer to.</p>
+<hr>
+<h2 id="footnotes">Footnotes</h2>
+<p>Many translations include translator notes.<br>
+They appear as small <strong>superscript markers</strong> (¹ ² …)<br>
+inline in the text.<br>
+Footnotes open in a panel in the <strong>lower part of the left sidebar</strong>,<br>
+sharing that space with the table of contents above it.<br>
+When no note is showing, the panel collapses to a thin <strong>"Footnotes ▾" strip</strong> at the bottom of the sidebar.</p>
+<h3 id="opening-a-footnote">Opening a footnote</h3>
+<p>There are three ways:</p>
+<ul>
+<li><strong>Click a marker</strong> in the text to open that specific note.</li>
+<li><strong>Click the "Footnotes ▾" strip</strong> and choose which translator's footnotes to show from the small menu.</li>
+<li>In a column's <strong>translator dropdown</strong>, pick <strong>"see their N footnotes"</strong> (shown only when that translator has notes on the current sutta).</li>
+</ul>
+<h3 id="working-with-the-panel">Working with the panel</h3>
+<ul>
+<li><strong>🐇</strong> jumps the main text to the verse the note belongs to (the segment reference is shown in the button's tooltip).</li>
+<li><strong>◀ ▶</strong> step to the previous / next note (shown only in single-note mode).</li>
+<li><strong>all</strong> switches to "show-all" mode — the default — listing every note for that translator as one scrollable commentary; the step arrows hide, since every note is already visible.</li>
+<li><strong>📋</strong> copies the note text to the clipboard.</li>
+<li><strong>✕</strong> closes the panel (it collapses back to the strip).</li>
+</ul>
+<h3 id="resizing-the-footnote-panel">Resizing the footnote panel</h3>
+<p>Drag the horizontal divider between the table of contents and the footnotes up or down to give each as much room as you like —<br>
+the split is remembered.</p>
+<blockquote>
+<p>On narrow screens (phones), footnotes instead slide up from the <strong>bottom of the screen</strong> as a sheet.</p>
+</blockquote>
+<hr>
+<h2 id="display-settings">⚙ Display settings</h2>
+<p>Click the <strong>⚙ Settings</strong> button (top right) to open the settings panel.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>☾ Dark / ☀️ Light</strong></td>
+<td>Toggle between dark and light reading themes. Your choice is remembered.</td>
+</tr>
+<tr>
+<td><strong>A+ / A−</strong></td>
+<td>Increase or decrease the reading font size.</td>
+</tr>
+<tr>
+<td><strong>Sidebar text size</strong></td>
+<td>Controls the font size of the left-sidebar table of contents.</td>
+</tr>
+<tr>
+<td><strong>Footnote text size</strong></td>
+<td>Controls the footnote panel's text size on its own, independent of the main reading font and the sidebar.</td>
+</tr>
+<tr>
+<td><strong>SC segment refs</strong></td>
+<td>Show or hide the SuttaCentral segment reference numbers (e.g. <code>mn10:2.5</code>) alongside each verse — useful for citing passages or cross-referencing with suttacentral.net.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="the-sutta-index">The sutta index</h2>
+<p>The <strong>index page</strong> lists all suttas in the collection with:</p>
+<ul>
+<li>The sutta number, title, and vagga (chapter group).</li>
+<li>Translation badges showing which translations are available for each sutta.</li>
+<li>A 🔒 icon on suttas that have been proofread and locked.</li>
+</ul>
+<p>Click any row to open that sutta's parallel viewer.</p>
+<hr>
+<h2 id="reading-offline">Reading offline</h2>
+<p>Every sutta page is <strong>fully self-contained</strong> — all text and styling is embedded in the HTML file.<br>
+If you save a page to your computer (<code>File → Save Page As…</code> in your browser), it will open and work completely offline, with no internet connection required.</p>
+<hr>
+<h2 id="translations-available">Translations available</h2>
+<p>Each translation is reproduced from its original source site, under that source's own licence.<br>
+Where a source publishes authoritative or updated terms, those govern — please consult the linked site.</p>
+<table>
+<thead>
+<tr>
+<th>Translation</th>
+<th>Source site</th>
+<th>Licence / terms</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pāli</strong> — Mahāsaṅgīti edition</td>
+<td><a href="https://suttacentral.net">suttacentral.net</a></td>
+<td>CC0 — public-domain dedication</td>
+</tr>
+<tr>
+<td><strong>Bhikkhu Sujato</strong> — aligned Pāli + English</td>
+<td><a href="https://suttacentral.net">suttacentral.net</a></td>
+<td>CC0 — public-domain dedication</td>
+</tr>
+<tr>
+<td><strong>Bhikkhu Thanissaro</strong> — American English</td>
+<td><a href="https://www.dhammatalks.org">dhammatalks.org</a></td>
+<td>Free distribution, non-commercial (per the site's terms)</td>
+</tr>
+<tr>
+<td><strong>Bhikkhu Bodhi</strong></td>
+<td><a href="https://wisdomexperience.org">Wisdom Publications</a></td>
+<td>© Wisdom Publications — only the suttas released for public, non-commercial use are shown</td>
+</tr>
+<tr>
+<td><strong>Bhikkhu Brahmali</strong> — Theravāda Vinaya, aligned Pāli + English</td>
+<td><a href="https://suttacentral.net">suttacentral.net</a></td>
+<td>CC0 — public-domain dedication</td>
+</tr>
+<tr>
+<td><strong>PTS</strong> — digitized Pali Text Society editions</td>
+<td><a href="https://www.buddhadust.net">buddhadust.net</a></td>
+<td>Digitized PTS editions — see the site for terms</td>
+</tr>
+<tr>
+<td><strong>Русский (Dhamma.gift)</strong> — curated Russian collection</td>
+<td><a href="https://dhamma.gift/ru/">Dhamma.gift/ru/</a></td>
+<td>Free distribution only. No commercial use. See the site for the individual translators and terms.</td>
+</tr>
+</tbody>
+</table>
+<p>Additional translations are added as alignments are completed.</p>
+<h3 id="pts-unmapped-suttas">PTS — unmapped suttas</h3>
+<p>The PTS (Woodward, Hare, and Rhys Davids) translations are aligned to SuttaCentral's sutta numbering.<br>
+But the digitized PTS source carries some translator text that has <strong>no SuttaCentral sutta id to display it beside</strong> — for example,<br>
+where the PTS edition's own numbering runs past SuttaCentral's,<br>
+or where it spells out a repetition series (peyyāla) that SuttaCentral collapses into a single range.<br>
+So that text never appears inline on the AN/SN pages.</p>
+<p>Rather than discard it, we collect every such passage — verbatim — on one reference page:<br>
+<strong><a href="misc/pts_unmapped/index.html">PTS — unmapped suttas</a></strong>.<br>
+It is grouped by nikāya and book, and pure repetition series are condensed to one representative sutta with a count,<br>
+so the page is complete in meaning without thousands of near-duplicate copies.</p>
+<h3 id="proofreading-verbatim-validation">Proofreading &amp; verbatim validation</h3>
+<p>The segment-by-segment alignment to SuttaCentral's Pāli numbering is done by AI, and a <strong>verbatim</strong> check —<br>
+automated against the original digital source translation — confirms that no wording was added, dropped, or changed.<br>
+(The verbatim check ignores whitespace added for display,<br>
+and normalizes some punctuation characters such as quotation marks and apostrophes.)</p>
+<h3 id="dhammagift">Русский (Dhamma.gift)</h3>
+<p>A curated Russian collection, distributed at <a href="https://dhamma.gift/ru/">Dhamma.gift/ru/</a>.<br>
+The many individual translators are listed under this single title on the source site.<br>
+The text is already keyed to SuttaCentral's Pāli segment numbering at the source,<br>
+so it is shown verbatim beside the Pāli and the English editions.</p>
+<p><strong>Terms:</strong> free distribution only, no commercial use — see the site for the individual translators and terms.</p>
+<p>See the source's <a href="https://f.dhamma.gift/assets/common/o-en.html">translation methodology</a> for how these translations were prepared.</p>
+<h3 id="sujato_corrected">Sujato_corrected</h3>
+<p>This is identical to the unaltered Bhikkhu Sujato SC edition, with the following terms restored to Pāḷi:</p>
+<ul>
+<li>samādhi → keep as <em>samādhi</em> (not "immersion")</li>
+<li>jhāna → keep as <em>jhāna</em> (not "absorption")</li>
+<li>nibbāna → keep as <em>Nibbāna</em> (not "extinguishment" or "quenched")</li>
+</ul>
+<p>And these English translations changed to align with genuine EBT:</p>
+<ul>
+<li>mettā → <em>friendliness</em> (not "love")</li>
+<li>ariyasāvaka → <em>noble one's disciple</em> (not "noble disciple")</li>
+<li>pīti → <em>mental joy</em> (not "rapture") — in jhāna context, to contrast with physical sukha</li>
+<li>sukha → <em>physical pleasure</em> (not "bliss") — in jhāna context; sukha vedanā in general encompasses both physical and mental</li>
+<li>sampajāno → <em>lucidly-discerning</em> (not "aware" or "situational awareness") — this is an inflection of the paññā (discernment/wisdom) faculty, not mere awareness</li>
+<li>vitakka-vicāra → <em>directed verbal thoughts and pondering them</em> (not "placing the mind and keeping it connected")</li>
+</ul>
+<p>This is by no means a comprehensive set of corrections —<br>
+just some of the most egregious violations of core EBT principles.</p>
+<p>Sujato's footnotes are unaltered and contain views incompatible with EBT.<br>
+Some are useful;<br>
+readers are encouraged to exercise discernment and critical thinking.</p>
+<h3 id="pali-editions">Pāli Editions</h3>
+<p>The site offers Pāli itself in more than one form:</p>
+<ul>
+<li>
+<p><strong>SC</strong> — SuttaCentral's segmented Mahāsaṅgīti Tipiṭaka edition. This is the default Pāli column and the alignment spine every translation on the site is matched to, segment by segment. Per SuttaCentral's own publication record, the text is drawn from <em>The Buddhist Era 2500 Great International Council Pāḷi Tipiṭaka</em> (40-volume Roman-script edition, B.E. 2548 / 2005), prepared by the Mahāsaṅgīti Tipiṭaka Buddhavasse 2500 for the M.L. Maniratana Bunnag Dhamma Society Fund. It is based on the Vipassanā Research Institute's Chaṭṭha Saṅgāyana CD-ROM edition (B.E. 2537–2542, tipitaka.org), fully proofread and recited four times between 2000–2002 and 2006–2007 to verify every Pāḷi sound and correct printing errors from the original 40-volume edition, with the 1958 Myanmar Chaṭṭha Saṅgāyana edition as primary reference and 18 additional national-script editions consulted for cross-checking. SuttaCentral extracted this Pāli text from the Mahāsaṅgīti edition's source XML, making only minor editorial changes to numbering and punctuation — no changes to the text itself. (<a href="https://github.com/suttacentral/bilara-data/tree/published/root/pli/ms">Source</a> · <a href="https://suttacentral.net/ms">SC edition page</a> · publication scpub64.)</p>
+</li>
+<li>
+<p><strong>Siam (Thai script)</strong> — the Royal Thai (Siam / Syāmaraṭṭha) recension of the Pāli canon, in its native Thai script, digitized from the printed 2015 Royal Thai Tipiṭaka edition by the <a href="https://github.com/kit119/D-tipitaka">D-Tipiṭaka project</a>. It is a separate manuscript lineage from the Mahāsaṅgīti edition used elsewhere on the site, so occasional wording differences between the two columns reflect the editions themselves, not translation error.</p>
+</li>
+<li><strong>Siam (IAST)</strong> — the same Royal Thai text, transliterated word-for-word into IAST (roman-script Pāli) for readers who don't read Thai script.</li>
+<li><strong>Myanmar (မြန်မာ)</strong> — the Chaṭṭha Saṅgāyana Tipiṭaka (CST), the Sixth-Council Burmese recension, in its native Myanmar script, taken from the <a href="https://github.com/VipassanaTech/tipitaka-xml">VipassanaTech tipitaka-xml</a> digitization of the Vipassanā Research Institute (tipitaka.org) edition. This is the same lineage the SC Mahāsaṅgīti text is <em>based on</em> (see <strong>SC</strong> above), so it typically agrees with the SC column word-for-word; where the printed CST elides a repeated passage with <em>…pe…</em> (peyyāla), that segment may show a shorter or blank match.</li>
+<li><strong>Myanmar (IAST)</strong> — the same CST text, transliterated word-for-word into IAST (roman-script Pāli) for readers who don't read Myanmar script.</li>
+</ul>
+<p>The Siam and Myanmar columns are each matched to the SC Pāli segment-by-segment by an automatic,<br>
+deterministic text-matching process —<br>
+not by AI and not by a human editor — so the displayed text is always taken verbatim from the source;<br>
+a handful of passages (mostly verse/gāthā sections,<br>
+where word order differs more between editions) may show a shorter or blank match at a given segment rather than an invented one.</p>
+<h3 id="ai-translations">AI Translations</h3>
+<p>Translations generated by an artificial intelligence model directly from the source language,<br>
+rather than adapted or ported from any existing English edition.</p>
+<h4 id="bodhi-esque">Bodhi-esque</h4>
+<p>A fresh English translation rendered <strong>directly from the Pāli</strong> in the <em>style</em> of Bhikkhu Bodhi —<br>
+his characteristic register and technical vocabulary (e.g. <em>concentration</em> for samādhi,<br>
+<em>taints</em> for āsava, with <em>jhāna</em>, <em>Nibbāna</em>, and <em>Dhamma</em> kept in Pāli).</p>
+<ul>
+<li><strong>Generated, not aligned:</strong> produced segment-by-segment from SuttaCentral's segmented Pāli, not derived from any existing English edition.</li>
+<li><strong>Copyright-clean:</strong> Bhikkhu Bodhi's own copyrighted translations are <strong>not</strong> used as input. Only a glossary of his preferred <em>terms</em> and a description of his style guide the output, so the result is an independent translation, not a reproduction.</li>
+<li><strong>Model:</strong> generated with DeepSeek Flash (V4), June 2026.</li>
+</ul>
+<p>As with any machine translation, it is a study aid, not an authoritative edition —<br>
+read it alongside the Pāli and the human translations.</p>
+<h4 id="arabic-esque">Arabic-esque</h4>
+<p>A Modern Standard Arabic (اللغة العربية الفصحى) translation, bridged from the <strong>Bodhi-esque</strong> English column —<br>
+the model is given the Bodhi-esque English segment-by-segment and renders each into Arabic under the same segment keys.</p>
+<ul>
+<li><strong>Bridged, not direct-from-Pāli:</strong> the source is the Bodhi-esque English, so the Arabic inherits its segment alignment 1:1 (each Pāli segment → one Arabic line). Any error already in the English carries through, and it is one further translation step removed from the Pāli.</li>
+<li><strong>Model:</strong> generated with DeepSeek V4 Flash, July 2026.</li>
+</ul>
+<p>As with any machine translation — and doubly so for a translation-of-a-translation —<br>
+it is a study aid, not an authoritative edition.<br>
+The column is displayed right-to-left in an Arabic (Naskh) typeface, sized up from the Latin columns for legibility.</p>
+<h4 id="chinese-esque">Chinese-esque</h4>
+<p>A Traditional Chinese (繁體中文) translation, bridged from the <strong>Bodhi-esque</strong> English column —<br>
+the model is given the Bodhi-esque English segment-by-segment and renders each into Traditional Chinese under the same segment keys,<br>
+using established Chinese Buddhist terminology (e.g. 世尊 for <em>the Blessed One</em>,<br>
+涅槃 for <em>Nibbāna</em>, 緣起 for <em>dependent origination</em>).</p>
+<ul>
+<li><strong>Bridged, not direct-from-Pāli:</strong> the source is the Bodhi-esque English, so the Chinese inherits its segment alignment 1:1 (each Pāli segment → one Chinese line). Any error already in the English carries through, and it is one further translation step removed from the Pāli.</li>
+<li><strong>Traditional, not Simplified:</strong> the text is rendered in Traditional characters (繁體), shown in a Traditional-Chinese typeface.</li>
+<li><strong>Model:</strong> generated with DeepSeek V4 Flash, July 2026.</li>
+</ul>
+<p>As with any machine translation — and doubly so for a translation-of-a-translation —<br>
+it is a study aid, not an authoritative edition.</p>
+<h4 id="deepseek-line-by-line">DeepSeek — Line by Line</h4>
+<p>Generated with DeepSeek V4 Flash (June 2026),<br>
+translating from the source language into plain English one line at a time.<br>
+This guarantees full coverage:<br>
+every line of the source has a corresponding line of translation, with no gaps or skipped material.</p>
+<h4 id="deepseek-v4-flash-paragraph-chunking">DeepSeek — V4 Flash (Paragraph Chunking)</h4>
+<p>Also generated with DeepSeek V4 Flash (June 2026), but unlike the line-by-line version above,<br>
+larger chunks — typically full paragraphs — are given to the model at once.<br>
+The intention is that additional context produces a more natural, better-informed translation.<br>
+The tradeoff is weaker alignment:<br>
+the output doesn't map to the source line-for-line as precisely as the line-by-line version does.</p>
+<h4 id="standard-disclaimers-apply">Standard Disclaimers Apply</h4>
+<p>As with any AI-generated content, these translations should not be taken as authoritative on their own.<br>
+Always cross-check against reliable human translations and, where possible, the source language itself.</p>
+<h5 id="why-allow-ai-translations-at-all">Why Allow AI Translations At All?</h5>
+<p>Given that AI translation carries a real risk of error, mistranslation, or subtle distortion,<br>
+it may seem odd for an EBT-focused site to include it rather than relying solely on established scholarly translations —<br>
+so it's worth explaining why AI-generated translations are included here.<br>
+Several reasons:</p>
+<ol>
+<li><strong>Full coverage</strong> — Many collections and individual suttas have no existing English translation at all, or their only existing translation is old, inconsistent, or poor enough that a modern AI model gets the core meaning across more accurately.</li>
+<li><strong>Speed relative to scholarship</strong> — Quality human translation is scarce and slow; a single translator may spend years on a single collection. AI translation offers an interim, clearly-labeled option while proper scholarly work catches up.</li>
+<li><strong>Independent cross-check</strong> — Even where a good human translation already exists, an independently generated AI version offers a second data point, useful for spotting translator bias, inconsistency, or error by comparison — not as a replacement.</li>
+<li><strong>Consistency across a large corpus</strong> — A single model applying consistent methodology and terminology across a huge collection can surface patterns that would be difficult for multiple human translators, working independently across different eras and styles, to maintain.</li>
+<li><strong>Transparency over omission</strong> — Clearly labeling material as AI-generated, along with the standard disclaimers, discloses the risk openly rather than hiding it — it's a labeled tool a reader can weigh accordingly, not a replacement presented as authoritative.</li>
+</ol>
+<p>In short:<br>
+AI translations don't replace the human scholarly record — they fill its gaps,<br>
+sit alongside it as a cross-check, and are labeled honestly as what they are.</p>
+<hr>
+<h2 id="ebtlbt-classification-legend">EBT/LBT Classification Legend</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>EBT (Early Buddhist Teachings)</th>
+<th>LBT (Late Buddhist Teachings)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Benign</strong></td>
+<td>✅ EBT</td>
+<td>✅ LBT</td>
+</tr>
+<tr>
+<td><strong>Malignant</strong></td>
+<td>⛔ EBT</td>
+<td>⛔ LBT</td>
+</tr>
+</tbody>
+</table>
+<h3 id="explanation">Explanation</h3>
+<p>This system marks four categories along two axes:<br>
+<strong>chronological origin</strong> (early vs. late) and <strong>compliance with core EBT</strong> (benign vs. malignant).</p>
+<ul>
+<li><strong>EBT (Early Buddhist Teachings)</strong> — material understood to derive from the earliest layer of the tradition, closer to the historical source.</li>
+<li><strong>LBT (Late Buddhist Teachings)</strong> — material developed in later periods, building on or diverging from the earlier layer. The Abhidhamma/Abhidharma literature is the largest early body of it, and the schools diverge sharply in how far they depart from the sutta layer — see <a href="abhidharma-schools.html">Differences in Abhidharma Schools</a>.</li>
+<li><strong>✅ Benign</strong> — content that is doctrinally consistent with core EBT, whether it's genuinely early material or a later elaboration that stays faithful to it.</li>
+<li><strong>⛔ Malignant</strong> — content that departs from or contradicts core EBT, whether misattributed as early when it isn't, or developed later in ways that undermine the earlier teaching.</li>
+</ul>
+<h3 id="the-four-categories">The Four Categories</h3>
+<ul>
+<li><strong>✅ EBT</strong> — genuine early material, compliant with core EBT (compliance here is closer to definitional, since this <em>is</em> the core)</li>
+<li><strong>⛔ EBT</strong> — material falsely claiming early/authoritative status, and/or not actually compliant with core EBT despite the label</li>
+<li><strong>✅ LBT</strong> — later development that remains compliant with core EBT; a legitimate extension, honestly presented as later</li>
+<li><strong>⛔ LBT</strong> — later material that departs from or contradicts core EBT, regardless of how it's presented</li>
+</ul>
+<p>This gives a quick visual shorthand for sorting sources or claims by how faithfully they track the earliest teachings,<br>
+without needing to write out the full judgment each time.</p>
+<h3 id="note-on-terminology">Note on Terminology</h3>
+<p>"Benign" and "malignant" here are not value judgments on any particular sect, tradition, or its practitioners.<br>
+The terms are framed strictly in relation to genuine core EBT compliance,<br>
+and describe the <em>effect</em> that compliance or non-compliance would have on the outcome of practice for someone who intends to follow genuine EBT.<br>
+A teaching is "benign" if following it supports that intended outcome,<br>
+and "malignant" if following it undermines or diverts from that outcome —<br>
+regardless of the sincerity, tradition, or good faith of those who hold it.<br>
+This framing reflects the charter and goal of the <a href="https://4nt.org/">Early Buddhism Meditation Preservation Society (EBMPS)</a>:<br>
+preserving and clarifying genuine EBT for practitioners seeking it.</p>
+<h3 id="why-include-malignant-material-at-all">Why Include Malignant Material at All?</h3>
+<p>Given that the explicit purpose of this site is to preserve and clarify genuine Early Buddhist Teachings,<br>
+it may seem counterintuitive — even contradictory —<br>
+to devote space to material that the classification system itself labels malignant,<br>
+so it's worth explaining directly why that material is included here rather than simply excluded.<br>
+Several reasons:</p>
+<ol>
+<li>
+<p><strong>Partial genuine content</strong> — Many ⛔-classified sources still contain some percentage of authentic, useful EBT material embedded within them. Excluding the whole text would mean losing that genuine content along with the corrupted portions.</p>
+</li>
+<li>
+<p><strong>Tracing corruption</strong> — Studying malignant material lets us trace <em>how</em>, <em>when</em>, and <em>where</em> deviation from core EBT entered the tradition — valuable for understanding the historical process of doctrinal drift, not just its end products.</p>
+</li>
+<li>
+<p><strong>Discernment training</strong> — Seeing a malignant text alongside the genuine EBT it diverges from is often the fastest way to learn the difference. Discernment is built through contrast, not by reading only "correct" material in isolation.</p>
+</li>
+<li>
+<p><strong>Meeting practitioners where they are</strong> — Many people already treat certain ⛔-classified texts as authoritative, because that's what their tradition handed them. Engaging directly with those specific texts — rather than ignoring them — is the only way to actually reach practitioners working from them.</p>
+</li>
+<li>
+<p><strong>Credibility of the classification system</strong> — A system that only ever produces ✅ ratings would look like a rubber stamp. Publicly classifying and explaining malignant material demonstrates that the criteria are being applied consistently, not selectively deployed to flatter the tradition.</p>
+</li>
+<li>
+<p><strong>Harm reduction over blanket avoidance</strong> — Simply telling someone "don't read that text" rarely works once they've already encountered it elsewhere. Precisely flagging <em>which parts</em> are corrupted — rather than a blanket condemnation — lets someone already engaging with the material salvage what's genuine and discard what isn't.</p>
+</li>
+<li>
+<p><strong>Inoculation against future distortions</strong> — Studying known patterns of corruption gives practitioners a template for recognizing new or unclassified material that follows similar patterns, rather than requiring every text to be pre-vetted for them.</p>
+</li>
+<li>
+<p><strong>Scholarly completeness</strong> — If EBMPS is to function as a serious reference rather than a curated devotional reading list, it needs to represent the actual landscape of Buddhist literature — not a filtered subset. Omitting malignant material would leave the archive incomplete and less useful for genuine comparative study.</p>
+</li>
+</ol>
+<p>In short:<br>
+classifying malignant material isn't an endorsement of it —<br>
+it's part of how genuine EBT gets preserved, taught, and defended.</p>
+<h4 id="canonical-precedent-suttas-that-contrast-wrong-and-right">Canonical Precedent: Suttas That Contrast Wrong and Right</h4>
+<p>Several suttas already use a contrastive method — pairing wrong and right views,<br>
+factors, or practices — to illuminate what is correct.<br>
+This gives canonical precedent for the classification approach used here.</p>
+<p><strong>Directly paired wrong/right formulations</strong></p>
+<ul>
+<li><strong>MN 117 (Mahācattārīsaka Sutta)</strong> — explicitly pairs wrong view/wrong path factors against right view/right path factors, including the mundane-vs-transcendent right view distinction.</li>
+<li><strong>SN 45.8 (Vibhaṅga Sutta)</strong> — analytical definitions of the eightfold path factors; often read alongside MN 117, which builds on this kind of analysis.</li>
+<li><strong>AN 10.103 / AN 10.104 (Micchatta Sutta, "Wrongness")</strong> paired with <strong>AN 10.105 / AN 10.106 (Sammatta Sutta, "Rightness")</strong> — the ten wrong factors (wrong view through wrong liberation) set directly against the ten right factors.</li>
+<li><strong>MN 9 (Sammādiṭṭhi Sutta)</strong> — Sāriputta's exposition of right view, built through repeated wrong-understanding/right-understanding contrasts across many topics (the unwholesome/wholesome, nutriment, dependent origination, and more).</li>
+</ul>
+<p><strong>Corruption / counterfeiting of the teaching itself</strong></p>
+<ul>
+<li><strong>SN 16.13 (Saddhammapaṭirūpaka Sutta)</strong> — the "counterfeit Dhamma" text; Kassapa asks the Buddha why the true Dhamma doesn't last, and the Buddha explains how a counterfeit version arises and displaces it. Likely the single most directly relevant sutta to this project's premise.</li>
+<li><strong>AN 4.180 (Mahāpadesa Sutta)</strong>, also found in <strong>DN 16</strong> — the "Four Great References," criteria for testing whether something attributed to the Buddha should be accepted as genuine by checking it against the Sutta and Vinaya. This is essentially the canonical precedent for doing an EBT/LBT classification at all.</li>
+<li><strong>MN 22 (Alagaddupama Sutta)</strong> — the snake-simile sutta on wrongly grasped vs. rightly grasped Dhamma; warns about misusing or misapplying the teaching even when the source material is genuine.</li>
+</ul>
+<p><strong>Wrong practice/view systems contrasted with the genuine path</strong></p>
+<ul>
+<li><strong>DN 2 (Sāmaññaphala Sutta)</strong> — surveys six contemporary teachers' wrong doctrines before presenting the Buddha's gradual training, using the contrast to illuminate what's distinct about right practice.</li>
+<li><strong>DN 1 (Brahmajāla Sutta)</strong> — catalogs 62 wrong views as a way of mapping the terrain around right view.</li>
+<li><strong>MN 76 (Sandaka Sutta)</strong> — contrasts four kinds of flawed holy life with the genuine one.</li>
+<li><strong>MN 8 (Sallekha Sutta)</strong> — a long list of paired wholesome/unwholesome states used to define "effacement."</li>
+</ul>
+<hr>
+<h2 id="theravada-atthakatha-tika-chronology">Theravāda Aṭṭhakathā &amp; Ṭīkā Chronology</h2>
+<p><em>(ChatGPT AI-generated summary, 2026-07.)</em></p>
+<p>A rough timeline of when the Theravāda Aṭṭhakathā (commentaries) and Ṭīkā
+(subcommentaries) were composed.</p>
+<p>This timeline is Theravāda-only.<br>
+The Abhidhamma/Abhidharma of the other schools ran
+on its own track — for who was writing what, and where the schools agree and diverge,
+see <a href="abhidharma-schools.html">Differences in Abhidharma Schools</a>.</p>
+<h3 id="overview-timeline">Overview Timeline</h3>
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th style="text-align: right;">Approximate Date</th>
+<th>Development</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Buddha's lifetime</td>
+<td style="text-align: right;">c. 5th century BCE</td>
+<td>Oral transmission of the Buddha's teachings</td>
+</tr>
+<tr>
+<td>Early Sinhala commentaries</td>
+<td style="text-align: right;">c. 3rd century BCE–4th century CE</td>
+<td>Development of the early Sri Lankan Aṭṭhakathā tradition (now lost)</td>
+</tr>
+<tr>
+<td>Buddhaghosa</td>
+<td style="text-align: right;">c. 400–450 CE</td>
+<td>Composition of major surviving Pali Aṭṭhakathā</td>
+</tr>
+<tr>
+<td>Dhammapāla</td>
+<td style="text-align: right;">late 5th–early 6th century CE</td>
+<td>Additional commentaries, especially on Khuddaka Nikāya texts</td>
+</tr>
+<tr>
+<td>Mature Aṭṭhakathā corpus</td>
+<td style="text-align: right;">5th–6th centuries CE</td>
+<td>Most of the Canon receives Pali commentarial explanation</td>
+</tr>
+<tr>
+<td>Early Ṭīkā</td>
+<td style="text-align: right;">c. 7th–9th centuries CE</td>
+<td>Beginning of subcommentarial literature</td>
+</tr>
+<tr>
+<td>Classical Ṭīkā period</td>
+<td style="text-align: right;">c. 10th–13th centuries CE</td>
+<td>Major scholastic development</td>
+</tr>
+<tr>
+<td>Later Ṭīkā traditions</td>
+<td style="text-align: right;">c. 14th–18th centuries CE</td>
+<td>Continued work in Sri Lanka and Myanmar</td>
+</tr>
+</tbody>
+</table>
+<h3 id="early-sinhala-atthakatha-lost">Early Sinhala Aṭṭhakathā (Lost)</h3>
+<p>Approximate period:<br>
+<strong>c. 250 BCE–400 CE</strong></p>
+<p>After the establishment of Buddhism in Sri Lanka, explanatory traditions developed
+around the Mahāvihāra.<br>
+Important early commentarial traditions included:</p>
+<ul>
+<li>Mahā-Aṭṭhakathā</li>
+<li>Mahāpaccarī</li>
+<li>Kurundī</li>
+<li>Andhakaṭṭhakathā</li>
+</ul>
+<p>These were composed in Sinhala (Sīhala) and are no longer extant as independent works.
+Their existence is known mainly because later commentators, especially Buddhaghosa,
+state that they used these earlier sources.</p>
+<h3 id="buddhaghosa-the-classical-pali-atthakatha">Buddhaghosa &amp; the Classical Pali Aṭṭhakathā</h3>
+<h4 id="buddhaghosa">Buddhaghosa</h4>
+<p>Approximate date:<br>
+<strong>c. 400–450 CE</strong></p>
+<p>Buddhaghosa reorganized and translated earlier Sinhala commentarial material into
+literary Pali.<br>
+Major works include:</p>
+<ul>
+<li><strong>Visuddhimagga</strong></li>
+<li><strong>Samantapāsādikā</strong> (Vinaya commentary)</li>
+<li><strong>Sumaṅgalavilāsinī</strong> (Dīgha Nikāya commentary)</li>
+<li><strong>Papañcasūdanī</strong> (Majjhima Nikāya commentary)</li>
+<li><strong>Sāratthappakāsinī</strong> (Saṃyutta Nikāya commentary)</li>
+<li><strong>Manorathapūraṇī</strong> (Aṅguttara Nikāya commentary)</li>
+</ul>
+<h3 id="dhammapala-later-atthakatha">Dhammapāla &amp; Later Aṭṭhakathā</h3>
+<h4 id="dhammapala">Dhammapāla</h4>
+<p>Approximate date:<br>
+<strong>late 5th–early 6th century CE</strong></p>
+<p>Associated works include commentaries on:</p>
+<ul>
+<li>Udāna</li>
+<li>Itivuttaka</li>
+<li>Theragāthā</li>
+<li>Therīgāthā</li>
+<li>Cariyāpiṭaka</li>
+</ul>
+<p>By approximately the 6th century CE, the major Pali commentarial corpus was
+substantially complete.</p>
+<h3 id="tika-subcommentaries">Ṭīkā (Subcommentaries)</h3>
+<p>Ṭīkā explain the Aṭṭhakathā rather than directly explaining the Canon.</p>
+<h4 id="early-tika">Early Ṭīkā</h4>
+<p>Approximate period:<br>
+<strong>7th–9th centuries CE</strong></p>
+<p>Some early subcommentarial works appear during this period.</p>
+<h4 id="classical-tika-period">Classical Ṭīkā Period</h4>
+<p>Approximate period:<br>
+<strong>10th–13th centuries CE</strong></p>
+<p>This was the major age of Theravāda scholastic expansion.<br>
+Important authors include:</p>
+<ul>
+<li>Ānanda</li>
+<li>Sāriputta</li>
+<li>Vācissara</li>
+<li>Other Sri Lankan scholastics</li>
+</ul>
+<p>Many major Ṭīkā were produced during the medieval Sri Lankan kingdoms.</p>
+<h3 id="simplified-timeline">Simplified Timeline</h3>
+<style>
+.chrono-tl{list-style:none;margin:1.1rem 0 1.6rem;padding:0 0 0 1.4rem;border-left:2px solid var(--accent)}
+.chrono-tl li{position:relative;padding:0 0 1rem .3rem}
+.chrono-tl li:last-child{padding-bottom:0}
+.chrono-tl li::before{content:"";position:absolute;left:calc(-1.4rem - 6px);top:.35rem;width:11px;height:11px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.chrono-tl .cd{display:block;font-weight:bold;font-size:.82rem;letter-spacing:.02em;color:var(--accent)}
+.chrono-tl .cw{display:block;color:var(--text)}
+</style>
+<ul class="chrono-tl">
+<li><span class="cd">c. 500 BCE</span><span class="cw">Buddha's teaching period</span></li>
+<li><span class="cd">c. 300 BCE</span><span class="cw">Buddhism established in Sri Lanka</span></li>
+<li><span class="cd">c. 250 BCE – 400 CE</span><span class="cw">Sinhala Aṭṭhakathā develop (now lost)</span></li>
+<li><span class="cd">c. 400 – 450 CE</span><span class="cw">Buddhaghosa composes the major Pali Aṭṭhakathā</span></li>
+<li><span class="cd">c. 500 – 550 CE</span><span class="cw">Dhammapāla — further commentaries (esp.  
+Khuddaka)</span></li>
+<li><span class="cd">c. 600 CE</span><span class="cw">Major Pali Aṭṭhakathā corpus substantially complete</span></li>
+<li><span class="cd">c. 700 – 900 CE</span><span class="cw">Early Ṭīkā (subcommentaries) begin</span></li>
+<li><span class="cd">c. 1000 – 1300 CE</span><span class="cw">Classical Ṭīkā tradition (medieval Sri Lanka)</span></li>
+<li><span class="cd">c. 1400 – 1800 CE</span><span class="cw">Later Sri Lankan &amp; Burmese scholastic works</span></li>
+</ul>
+
+<h3 id="scholarly-sources">Scholarly Sources</h3>
+<h4 id="oskar-von-hinuber">Oskar von Hinüber</h4>
+<p><em>A Handbook of Pāli Literature</em> (1996) — standard reference for dating Pali texts;
+covers Aṭṭhakathā and Ṭīkā chronology.</p>
+<h4 id="k-r-norman">K. R. Norman</h4>
+<p><em>Pali Literature</em> (1983);<br>
+<em>A Philological Approach to Buddhism</em> (1997) — discusses
+historical development and linguistic dating.</p>
+<h4 id="a-k-warder">A. K. Warder</h4>
+<p><em>Indian Buddhism</em> — discusses Buddhist schools and Sri Lankan textual traditions.</p>
+<h4 id="rupert-gethin">Rupert Gethin</h4>
+<p><em>The Foundations of Buddhism</em> — historical overview of Theravāda development.</p>
+<h4 id="g-p-malalasekera">G. P. Malalasekera</h4>
+<p><em>The Pāli Literature of Ceylon</em> (1928) — classic study of Sri Lankan Pali literature.</p>
+<h4 id="bhikkhu-nanamoli">Bhikkhu Ñāṇamoli</h4>
+<p><em>The Path of Purification</em> (Visuddhimagga translation and introduction) — discusses
+Buddhaghosa and the commentarial tradition.</p>
+<h3 id="summary">Summary</h3>
+<p>The Theravāda exegetical tradition developed over approximately 1,500 years:</p>
+<ul>
+<li><strong>Lost Sinhala Aṭṭhakathā:</strong> c. 3rd century BCE–4th century CE</li>
+<li><strong>Surviving Pali Aṭṭhakathā:</strong> mainly 5th–6th centuries CE</li>
+<li><strong>Major Ṭīkā:</strong> mainly 10th–13th centuries CE</li>
+<li><strong>Later scholastic Ṭīkā traditions:</strong> 14th–18th centuries CE</li>
+</ul>
+<p>The broad scholarly picture:<br>
+the Canon was preserved first through oral tradition,
+then interpreted through early Sinhala commentaries, systematized by Buddhaghosa and
+later commentators, and further refined by medieval Ṭīkā writers.</p>
+<hr>
+<h2 id="tips-for-comparative-study">Tips for comparative study</h2>
+<ul>
+<li><strong>Two translations + Pāli</strong> is a productive default — three or more is more fun. The Pāli column lets you check the original word when two translators differ.</li>
+<li><strong>Reorder columns with drag and drop</strong> so the translations you're comparing sit next to each other. Footnotes share the left sidebar, so put a translator's column toward the left, near its notes, when reading text and notes together.</li>
+<li><strong>Segment numbers on</strong> (<code>SC segment refs</code>) makes it easy to note a verse number and find the same passage on suttacentral.net for commentaries or other translations.</li>
+<li><strong>Footnote "all" mode</strong> works well for studying a short sutta in depth — you get the notes as a continuous commentary alongside the text.</li>
+<li>If you are comparing two English translations and want Pāli close at hand but less prominent, put Pāli in the middle and shrink it by making the browser window narrower — the outer columns stay readable while Pāli serves as an anchor reference.</li>
+</ul>
+<hr>
+<h2 id="about">About</h2>
+<p><strong>s.4nt.org</strong> presents the discourses of the Pāli Canon — the earliest record of the Buddha's teaching —<br>
+with the original Pāli and one or more English translations side by side,<br>
+aligned segment by segment, so the same passage sits at the same height across every column.</p>
+<p>The site is a project of the <strong>Early Buddhism Meditation Preservation Society</strong> (EBMPS), at <a href="https://4nt.org">4nt.org</a>. </p>
+<p>The pages are produced by a custom tool that re-aligns existing translations to SuttaCentral's segmented Pāli text one segment at a time —<br>
+"un-babbling" them back into a single, comparable structure.<br>
+Each page is fully self-contained:<br>
+saved to disk, it works offline with no server and no tracking.</p>
+<p>See <a href="#what-youre-looking-at">What you're looking at</a> above for how to use the viewer.</p>
+<hr>
+<h2 id="legal">Legal</h2>
+<p><strong>The texts.</strong> Each translation is reproduced from its original source under that source's own licence —<br>
+see <strong><a href="#translations-available">Translations available</a></strong> above for the source website and the specific terms of each.<br>
+Copyright in every translation remains with its respective author, translator, or publisher;<br>
+the texts are presented here for study and free distribution only, never for sale or commercial use.</p>
+<p><strong>The site.</strong> The site software and the original site material (layout, segment-alignment data,<br>
+and this guide) are produced by the Early Buddhism Meditation Preservation Society and offered for non-commercial use.</p>
+<p><strong>Contact.</strong> For corrections, licensing questions, or to report an error,<br>
+write to the Early Buddhism Meditation Preservation Society via <a href="https://4nt.org">4nt.org</a>.</p>
+<blockquote>
+<p>This is a good-faith summary, not legal advice. Where it conflicts with the licence a source publishes for its own text, that licence governs.</p>
+</blockquote>
+</main>
+
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="./index.html" title="s.4nt.org — home"><img src="/assets/img/logo4nt.png" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="./help.html">Help</a><a href="./help.html#about">About</a><a href="./help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Aug 06, 2026 at 06:13 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="./4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+
+<script>
+const JUMP_ROOT = '.';
+// ── 🐇 QUICK-JUMP (shared source: quickjump.py) ──
+const JUMP_KEY = 'debabel.jump.v1';
+const JUMP_MAX = 20;
+const JUMP_LIMITS = {"mn": 152, "dn": 34, "an": 11, "sn": 56, "ma": 222, "da": 30, "sa": 1362, "ea": 52, "kp": 9, "dhp": 423, "ud": 8, "iti": 112, "snp": 5, "vv": 85, "pv": 51, "thag": 21, "thig": 16, "tha-ap": 563, "thi-ap": 40, "bv": 29, "cp": 35, "ja": 547, "mnd": 16, "cnd": 23, "ps": 3, "ne": 37, "pe": 9, "mil": 8, "ds": 2, "vb": 18, "dt": 2, "pp": 2, "kv": 23, "ya": 10, "patthana": 24, "arv": 28, "vimt": 12, "mn-a": 152, "mn-t": 152, "dn-a": 34, "dn-t": 34, "an-a": 11, "sn-a": 56, "an-t": 11, "sn-t": 56, "kp-a": 9, "dhp-a": 423, "ud-a": 80, "iti-a": 112, "snp-a": 70, "vv-a": 85, "pv-a": 51, "thag-a": 264, "thig-a": 67, "cp-a": 35, "bv-a": 27, "tha-ap-a": 237, "vism": 23, "vism-t": 23, "vsg": 258, "vsg-t": 256, "vnv": 3183, "vnv-t": 3183, "uv": 970, "uv-t": 965, "khs": 476, "khs-pt": 473, "khs-at": 475, "mls": 128, "mls-t": 116, "bmc": 2, "ja-a": 547};   // supported collections (single source: quickjump.LIMITS)
+const JUMP_GROUPED = {"an": 1, "ea": 1, "sn": 1}; // niks addressed two-level (an3.65) → one page per book
+const JUMP_KN = {"bv": 1, "cnd": 1, "cp": 1, "dhp": 1, "iti": 1, "ja": 1, "kp": 1, "mil": 1, "mnd": 1, "ne": 1, "pe": 1, "ps": 1, "pv": 1, "snp": 1, "tha-ap": 1, "thag": 1, "thi-ap": 1, "thig": 1, "ud": 1, "vv": 1};           // KN books → one page per book at kn/<abbr>/ (full ref = anchor)
+const JUMP_KN_BARE = {"dhp": 1, "iti": 1}; // …except these, whose anchors are bare addresses (dhp21 → #21)
+const JUMP_AB = {"ds": 1, "dt": 1, "kv": 1, "patthana": 1, "pp": 1, "vb": 1, "ya": 1};           // Abhidhamma books → one page per book at tv_ab/<abbr>/
+const JUMP_RANGE = {"sa": 100};     // flat ref → numeric-range unit page (sa)
+const JUMP_FLAT = {"arv": 1, "vimt": 1};       // single-file whole-collection books (arv) → <nik>/index.html
+const JUMP_CMY = {"mn-a": {"dir": "cmy/mn", "bound": 152}, "mn-t": {"dir": "scmy/mn", "bound": 152}, "dn-a": {"dir": "cmy/dn", "bound": 34}, "dn-t": {"dir": "scmy/dn", "bound": 34}};         // commentary/ṭīkā: mn-a1 → cmy/mn/mn1/, mn-t1 → scmy/mn/mn1/
+const JUMP_CMY_GROUPED = {"an-a": {"dir": "cmy/an", "bound": 11}, "sn-a": {"dir": "cmy/sn", "bound": 56}, "an-t": {"dir": "scmy/an", "bound": 11}, "sn-t": {"dir": "scmy/sn", "bound": 56}};  // grouped commentary: an-a3.65 → cmy/an/an3/#an-a3.65
+const JUMP_CMY_KN = {"kp-a": {"dir": "cmy/kn", "bound": 9}, "dhp-a": {"dir": "cmy/kn", "bound": 423}, "ud-a": {"dir": "cmy/kn", "bound": 80}, "iti-a": {"dir": "cmy/kn", "bound": 112}, "snp-a": {"dir": "cmy/kn", "bound": 70}, "vv-a": {"dir": "cmy/kn", "bound": 85}, "pv-a": {"dir": "cmy/kn", "bound": 51}, "thag-a": {"dir": "cmy/kn", "bound": 264}, "thig-a": {"dir": "cmy/kn", "bound": 67}, "cp-a": {"dir": "cmy/kn", "bound": 35}, "bv-a": {"dir": "cmy/kn", "bound": 27}, "tha-ap-a": {"dir": "cmy/kn", "bound": 237}};    // KN per-book commentary: kp-a5 → cmy/kn/kp/index.html#kp-a5
+const JUMP_CMY_TREATISE = {"vism": {"dir": "cmy/vism", "bound": 23}, "vism-t": {"dir": "scmy/vism", "bound": 23}, "vsg": {"dir": "cmy/vsg", "bound": 258}, "vsg-t": {"dir": "scmy/vsg-t", "bound": 256}, "vnv": {"dir": "cmy/vnv", "bound": 3183}, "vnv-t": {"dir": "scmy/vnv-t", "bound": 3183}, "uv": {"dir": "cmy/uv", "bound": 970}, "uv-t": {"dir": "scmy/uv-t", "bound": 965}, "khs": {"dir": "cmy/khs", "bound": 476}, "khs-pt": {"dir": "scmy/khs-pt", "bound": 473}, "khs-at": {"dir": "scmy/khs-at", "bound": 475}, "mls": {"dir": "cmy/mls", "bound": 128}, "mls-t": {"dir": "scmy/mls-t", "bound": 116}, "bmc": {"dir": "misc/bmc", "bound": 2}};  // treatise: vism17 → cmy/vism/index.html#vism17
+const JUMP_JA_RANGES = [[1,1,150], [2,151,250], [3,251,300], [4,301,350], [5,351,375], [6,376,395], [7,396,416], [8,417,426], [9,427,438], [10,439,454], [11,455,463], [12,464,473], [13,474,483], [14,484,496], [15,497,510], [16,511,520], [17,521,525], [18,526,528], [19,529,530], [20,531,532], [21,533,537], [22,538,547]];  // Jātaka: ja-a265 → cmy/kn/ja/ja{nip}/index.html#ja-a265
+const JUMP_TAISHO = {"t0613": 1, "t0614": 1, "t0615": 1, "t0616": 1, "t0617": 1, "t1536": 1, "t1537": 1, "t1538": 1, "t1539": 1, "t1540": 1, "t1542": 1, "t1544": 1, "t1545": 1, "t1548": 1, "t1579": 1};    // Taishō texts: t0613 → taisho/t0613/index.html#<section>
+const jumpInputEl = document.getElementById('jumpInput');
+const jumpMsgEl = document.getElementById('jumpMsg');
+const jumpHistEl = document.getElementById('jumpHist');
+const jumpClearEl = document.getElementById('jumpClear');   // null on pages without a clear button
+function syncJumpClear(){ if(jumpClearEl) jumpClearEl.hidden = !jumpInputEl.value; }
+function loadJumpHist(){
+  try{ const h = JSON.parse(localStorage.getItem(JUMP_KEY)); return Array.isArray(h)?h:[]; }
+  catch(e){ return []; }
+}
+function saveJumpHist(h){
+  try{ localStorage.setItem(JUMP_KEY, JSON.stringify(h.slice(0, JUMP_MAX))); }catch(e){}
+}
+function vinPage(ref){
+  // Theravāda Vinaya ref → its sub-unit PAGE id (folder under vin/tv/).
+  let m;
+  if(m=/^(pli-tv-b[iu]-pm)/.exec(ref)) return m[1];          // pātimokkha → the whole-code page
+  if(m=/^(pli-tv-b[iu]-vb-[a-z]+)/.exec(ref)) return m[1];   // vibhaṅga rule → its offense-class page
+  if(m=/^(pli-tv-pvr\d+)/.exec(ref)) return m[1];            // parivāra → its chapter page
+  if(m=/^(pli-tv-kd\d+)/.exec(ref)) return m[1];             // khandhaka page
+  return ref;
+}
+function parseJumpRef(raw){
+  // Named destinations & aliases — a bare keyword (optional leading "/", e.g. /home)
+  // that returns a ready-made URL (r.url, relative to JUMP_ROOT) instead of the
+  // nik/page form. Site landing pages, not texts.
+  const kw = (raw||'').trim().toLowerCase().replace(/^\//, '');
+  const NAMED = {home: '/index.html', major: '/major/index.html', taisho: '/taisho/index.html',
+                 abhi: '/tv_ab/index.html'};
+  if(kw in NAMED) return {url: NAMED[kw], ref: kw};
+  // Taishō alias: taisho614 / taisho0614 → the t<4-digit> page
+  // (T0614 → dist/taisho/t0614/, nested under the sub-index — taisho_texts.DIST_PARENT).
+  // Accepts the number with or without leading zeros; the folder is zero-padded to 4.
+  // A dotted tail is an L24 section on that page (taisho614.1.6.3 → …#1.6.3) — the same
+  // destination the canonical `t0614.1.6.3` form below reaches, so a reader who thinks in
+  // "Taishō 614" and one who pastes a citation land in the same place. The hash is appended
+  // to the url here rather than returned separately: jumpToRef's `r.url` branch navigates
+  // straight to it and never looks at r.hash.
+  let tm;
+  if(tm = /^taisho\s*0*(\d+)((?:\.\d+[a-z]?)*)$/.exec(kw)){
+    return {url: '/taisho/t' + tm[1].padStart(4, '0') + '/index.html'
+                 + (tm[2] ? '#' + tm[2].slice(1) : ''),
+            ref: 'taisho' + tm[1] + tm[2]};
+  }
+  // Taishō text page (taisho_texts.TEXTS): t0613 → taisho/t0613/index.html;
+  //   t0613.1.19.1 → …#1.19.1 (L24 section — a Taishō page's anchors are BARE dotted
+  //   addresses whose leading component is the juan, or the 品 chapter for a `pin` text,
+  //   0 being the injected front matter);
+  //   t0613:0.1 → …#tr-t0613:0.1 (segment).
+  // Its OWN regex rather than the general nik+number one below, for two reasons: "t" is a
+  // page-id prefix, not a collection with a numeric bound (the published numbers are a set,
+  // so an absent one must say so rather than be measured against a ceiling), and a 品 id
+  // may carry a LETTER — T1548's 序 appendix is section "0a" and its subsections "0a.1",
+  // which no purely numeric grammar can express.
+  const tt = /^\s*t\s*0*(\d+)(?:\.(\d+[a-z]?(?:\.\d+)*))?\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i
+             .exec(raw||'');
+  if(tt){
+    const page = 't' + tt[1].padStart(4, '0');
+    const tsub = tt[2] ? tt[2].toLowerCase() : null, tseg = tt[3] || null;
+    if(!(page in JUMP_TAISHO))
+      return {err: 'Taishō ' + parseInt(tt[1], 10) + ' is not available yet'};
+    return {nik: 'taisho', page, suttaId: page, seg: tseg,
+            ref: page + (tsub ? '.' + tsub : '') + (tseg ? ':' + tseg : ''),
+            hash: tseg ? undefined : (tsub ? '#' + tsub : '')};
+  }
+  // Vinaya COMMENTARY (cmy/vin) / SUBCOMMENTARY (scmy/vin): the root's own address with
+  // "-a" / "-t" appended — the commentary is laid out page for page against the root, so
+  //   pli-tv-bu-vb-np1-a → cmy/vin/pli-tv-bu-vb-np/index.html#pli-tv-bu-vb-np1-a
+  //   pli-tv-kd1-a       → cmy/vin/pli-tv-kd1/index.html (the page itself)
+  //   pli-tv-bu-vb-np1-a:3.2 → …#tr-pli-tv-bu-vb-np1-a:3.2 (segment)
+  //   pli-tv-vi-a-pre    → cmy/vin/preface/index.html (the Bāhiranidāna, which comments on
+  //                        no rule and so has no root page of its own)
+  // Must precede the root-Vinaya branch: its `[a-z-]*` would swallow the "-a" and route a
+  // commentary ref to the root page.
+  // `-a` the Samantapāsādikā, `-t` the Sāratthadīpanī, and one suffix per further
+  // subcommentary — each in its own directory (see build_vin_cmy.LAYERS).
+  const VIN_LAYER_DIR = {a: 'cmy/vin', t: 'scmy/vin', vjb: 'scmy/vin_vjb',
+                         vmv: 'scmy/vin_vmv', pcy: 'scmy/vin_pcy'};
+  const vc = /^\s*(pli-tv-[a-z][a-z-]*?(?:\d[\d.-]*)?)-(a|t|vjb|vmv|pcy)(-pre)?\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i
+             .exec(raw||'');
+  if(vc){
+    const fid = vc[1].toLowerCase(), layer = vc[2].toLowerCase();
+    const pre = !!vc[3], seg = vc[4] || null;
+    const unit = fid + '-' + layer + (pre ? '-pre' : '');
+    return {nik: VIN_LAYER_DIR[layer],
+            page: pre ? 'preface' : vinPage(fid), suttaId: unit, seg,
+            ref: unit + (seg ? ':' + seg : '')};
+  }
+  // Vinaya (vin/tv): pli-tv-bu-vb-pj1 → vin/tv/pli-tv-bu-vb-pj/index.html#pli-tv-bu-vb-pj1
+  //                  pli-tv-kd1 → that page top; pli-tv-pvr1.5 → …/pli-tv-pvr1/#pli-tv-pvr1.5
+  //                  pli-tv-bu-vb-pj1:2.3 → …#tr-pli-tv-bu-vb-pj1:2.3 (segment)
+  const vt = /^\s*(pli-tv-[a-z][a-z-]*(?:\d[\d.-]*)?)\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i.exec(raw||'');
+  if(vt){
+    const ref = vt[1].toLowerCase(), seg = vt[2] || null;
+    return {nik: 'vin/tv', page: vinPage(ref), suttaId: ref, seg, ref: ref + (seg ? ':' + seg : '')};
+  }
+  // Flat (MN/DN):    mn125            → its page;  mn125:2.5 → #tr-mn125:2.5
+  // Grouped (AN/SN): an3.65           → an/an3/index.html#an3.65 (sutta is an anchor)
+  //                  sn22.59:3.2      → …/sn/sn22/index.html#tr-sn22.59:3.2
+  //                  an1.1-10         → …/an/an1/index.html#an1.1-10 (ranged sutta)
+  //                  an3              → the nipāta page top (bare book ref)
+  // KN (per-book):   ud1.1            → kn/ud/index.html#ud1.1 (the abbr IS the page)
+  //                  dhp21            → kn/dhp/index.html#21 (bare — JUMP_KN_BARE)
+  //                  dhp2.            → kn/dhp/index.html#2. (its 2nd vagga, not its 2nd verse)
+  //                  ud1.1:2.3        → kn/ud/index.html#tr-ud1.1:2.3
+  //                  mil3.1.1         → kn/mil/index.html#mil3.1.1 (deep, multi-level)
+  // Abhidhamma:      vb1              → tv_ab/vb/index.html#vb1 (section anchor)
+  //                  vb1:24.5         → tv_ab/vb/index.html#tr-vb1:24.5 (segment)
+  // Flat single-file (arv, 0-based):
+  //                  arv12            → arv/index.html#12 (topic anchor — bare, no "arv" prefix)
+  //                  arv12:3          → arv/index.html#tr-arv:12.3 (row — underlying key is
+  //                                     "<nik>:<topic>.<row>", a dot not a colon before the
+  //                                     row, unlike every other category — hence its own hash)
+  // NUMBERED CHAPTER (vagga) on a KN book page: a number with a TRAILING DOT — `dhp2.` is
+  // Dhp's second vagga, `kn/dhp/index.html#2.`. The dot is the whole point. On a book whose
+  // units are bare SuttaCentral numbers (JUMP_KN_BARE — Dhp's verses are 1…423) the chapters
+  // cannot also be 1…26, because `dhp2` already means verse 2; the dot says "the chapter",
+  // and it stays in the address so one ref names one thing. Routed for EVERY KN book rather
+  // than only the ones that have a chapter layer today, for the same reason dotted L24 refs
+  // are: a book that gains vagga groups should need no edit here, and a book without them
+  // resolves nothing and lands on its page top. See build_kn._group_by_vagga.
+  const cm = /^\s*([a-z]+(?:-[a-z]+)*)\s*(\d+)\.\s*$/i.exec(raw||'');
+  if(cm){
+    const cnik = cm[1].toLowerCase(), cn = parseInt(cm[2], 10);
+    if(!(cnik in JUMP_LIMITS)) return {err: cnik.toUpperCase()+' is not available yet'};
+    if(!JUMP_KN[cnik]) return {err: cnik.toUpperCase()+' has no numbered vaggas'};
+    if(cn < 1 || cn > JUMP_LIMITS[cnik])
+      return {err: cnik.toUpperCase()+' goes from 1 to '+JUMP_LIMITS[cnik]};
+    return {nik: 'kn', page: cnik, suttaId: cn + '.', seg: null,
+            ref: cnik + cn + '.', hash: '#' + cn + '.'};
+  }
+  const m = /^\s*([a-z]+(?:-[a-z]+)*)\s*(\d+)(?:\.(\d+(?:\.\d+)*(?:-\d+)?))?\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i.exec(raw||'');
+  if(!m) return null;
+  const nik = m[1].toLowerCase(), n = parseInt(m[2], 10), sub = m[3] || null, seg = m[4] || null;
+  if(!(nik in JUMP_LIMITS)) return {err: nik.toUpperCase()+' is not available yet'};
+  if(JUMP_FLAT[nik]){
+    if(n < 0 || n > JUMP_LIMITS[nik])
+      return {err: nik.toUpperCase()+' goes from 0 to '+JUMP_LIMITS[nik]};
+    // L24 dot-addressing: a DOTTED ref (vimt8.1.15, no colon) → the page anchor #8.1.15,
+    // a real DOM id. Dots = L24 (this system); colon = SuttaCentral (just below).
+    if(sub && !seg){
+      const dot = n + '.' + sub;
+      return {nik, page: '', suttaId: dot, seg: null, ref: nik + dot, hash: '#' + dot};
+    }
+    if(sub) return {err: nik.toUpperCase()+' refs look like '+nik+n+' or '+nik+n+':3'};
+    const hash = seg ? ('#tr-'+nik+':'+n+'.'+seg) : ('#'+n);
+    return {nik, page: '', suttaId: String(n), seg, ref: nik+n+(seg?':'+seg:''), hash};
+  }
+  if(JUMP_CMY[nik]){
+    // mn-a1 → cmy/mn/mn1/index.html ; mn-a1:2.3 → …#tr-mn-a1:2.3 (segment)
+    const c = JUMP_CMY[nik];
+    if(n < 1 || n > c.bound) return {err: nik.toUpperCase()+' goes from 1 to '+c.bound};
+    const base = nik.split('-')[0] + n;   // page folder mirrors root (mn-a1 → mn1)
+    if(sub && !seg)                       // L24 section (see the flat branch below)
+      return {nik: c.dir, page: base, suttaId: nik + n, seg: null,
+              ref: nik + n + '.' + sub, hash: '#' + n + '.' + sub};
+    if(sub) return {err: nik.toUpperCase()+' refs look like '+nik+n+' or '+nik+n+':2.5'};
+    return {nik: c.dir, page: base, suttaId: nik + n, seg,
+            ref: nik + n + (seg ? ':' + seg : ''), hash: seg ? undefined : ''};
+  }
+  if(JUMP_CMY_GROUPED[nik]){
+    // an-a3.65 → cmy/an/an3/index.html#an-a3.65 ; an-a3.65:2.4 → …#tr-an-a3.65:2.4 ;
+    // bare an-a3 → the nipāta page top. Page folder mirrors root (an-a3 → an3); the
+    // sutta anchor is the full an-a prefix (matches build_an_cmy's node ids).
+    const c = JUMP_CMY_GROUPED[nik];
+    if(n < 1 || n > c.bound) return {err: nik.toUpperCase()+' goes from 1 to '+c.bound};
+    const page = nik.split('-')[0] + n;              // an3
+    const suttaId = sub ? (nik + n + '.' + sub) : null;   // an-a3.65 (null for a bare nipāta ref)
+    return {nik: c.dir, page, suttaId, seg,
+            ref: (suttaId || (nik + n)) + (seg ? ':' + seg : '')};
+  }
+  if(JUMP_CMY_KN[nik]){
+    // kp-a5 → cmy/kn/kp/index.html#kp-a5 ; kp-a5:2.3 → …#tr-kp-a5:2.3 ; bare kp-a → book top.
+    // Page folder = the abbr (kp-a → kp); the unit anchor is the full <abbr>-a prefix
+    // (matches build_kn_cmy's group ids).
+    const c = JUMP_CMY_KN[nik];
+    if(n < 1 || n > c.bound) return {err: nik.toUpperCase()+' goes from 1 to '+c.bound};
+    const page = nik.split('-')[0];                     // kp
+    const suttaId = nik + n + (sub ? '.' + sub : '');   // kp-a5
+    return {nik: c.dir, page, suttaId, seg, ref: suttaId + (seg ? ':' + seg : '')};
+  }
+  if(JUMP_CMY_TREATISE[nik]){
+    // ONE page for the work (page = ''). Its group ids are BARE L24 dot-addresses, so a
+    // section ref drops the nik prefix: vism8 → #8 (chapter), vism8.4.16 → #8.4.16. A
+    // SEGMENT ref keeps the prefixed SC row key: vism8:216.1 → #tr-vism8:216.1.
+    const c = JUMP_CMY_TREATISE[nik];
+    if(n < 1 || n > c.bound) return {err: nik.toUpperCase()+' goes from 1 to '+c.bound};
+    const dot = n + (sub ? '.' + sub : '');             // bare L24 anchor (8 / 8.4.16)
+    const suttaId = nik + dot;                            // vism8.4.16 (row-key base for a seg)
+    return {nik: c.dir, page: '', suttaId, seg, ref: suttaId + (seg ? ':' + seg : ''),
+            hash: seg ? undefined : '#' + dot};          // no-seg → bare anchor; seg → tr-<key>
+  }
+  if(nik === 'ja-a'){
+    // ja-a265 → the nipāta page holding jātaka 265: cmy/kn/ja/ja{nip}/index.html#ja-a265
+    if(n < 1 || n > JUMP_LIMITS['ja-a'])
+      return {err: 'JA goes from 1 to ' + JUMP_LIMITS['ja-a']};
+    let nip = 0;
+    for(const r of JUMP_JA_RANGES){ if(n >= r[1] && n <= r[2]){ nip = r[0]; break; } }
+    const suttaId = 'ja-a' + n + (sub ? '.' + sub : '');
+    return {nik: 'cmy/kn/ja', page: 'ja' + nip, suttaId, seg,
+            ref: suttaId + (seg ? ':' + seg : '')};
+  }
+  // A reserved vagga 0 holds material numbered outside the root sequence — cnd puts its
+  // four verbatim Snp 5 root-verse units at 0.1-0.4 (see niddesa_l24.py) — so a DOTTED 0
+  // ref is a real address and is let through for every collection rather than an allow-list
+  // of the books that currently have one; it resolves if the outline is there and lands on
+  // the page top if not. A bare `<nik>0` is still an error.
+  const zeroOk = n === 0 && sub;
+  if((n < 1 && !zeroOk) || n > JUMP_LIMITS[nik])
+    return {err: nik.toUpperCase()+(JUMP_GROUPED[nik]?' book':'')+' goes from 1 to '+JUMP_LIMITS[nik]};
+  if(JUMP_KN[nik]){
+    const suttaId = nik + n + (sub ? '.' + sub : '');   // dhp1 / ud1.1 / mil3.1.1
+    // A BARE-anchored book (JUMP_KN_BARE — Dhp) numbers its units as SuttaCentral does and
+    // anchors them by that number alone: dhp21 → #21, dhp21.2 → #21.2. Every other KN book
+    // anchors the prefixed ref itself (#ud1.1), which is the default below. The SEGMENT form
+    // is unaffected either way — row keys keep the book prefix (#tr-dhp21:1.1).
+    const hash = (JUMP_KN_BARE[nik] && !seg) ? '#' + n + (sub ? '.' + sub : '') : undefined;
+    return {nik: 'kn', page: nik, suttaId, seg, ref: suttaId + (seg ? ':' + seg : ''), hash};
+  }
+  if(JUMP_AB[nik]){
+    const suttaId = nik + n + (sub ? '.' + sub : '');   // vb1 (Abhidhamma book section anchor)
+    return {nik: 'tv_ab', page: nik, suttaId, seg, ref: suttaId + (seg ? ':' + seg : '')};
+  }
+  if(JUMP_GROUPED[nik]){
+    const page = nik + n;                              // folder, e.g. an/an3/
+    const suttaId = sub ? page + '.' + sub : null;     // an3.65 (null for a bare book ref)
+    return {nik, page, suttaId, seg, ref: (suttaId || page) + (seg ? ':' + seg : '')};
+  }
+  if(JUMP_RANGE[nik]){
+    const bucket = JUMP_RANGE[nik];
+    const start = Math.floor((n-1)/bucket)*bucket + 1;          // 1, 101, …, 1301
+    const end = Math.min(start + bucket - 1, JUMP_LIMITS[nik]);  // 100, …, 1362 (tail clamps)
+    const suttaId = nik + n;                                     // sa42
+    const page = nik + start + '-' + end;
+    if(sub && !seg)                                    // L24 section (see the flat branch)
+      return {nik, page, suttaId, seg: null,
+              ref: suttaId + '.' + sub, hash: '#' + n + '.' + sub};
+    return {nik, page, suttaId, seg, ref: suttaId + (seg ? ':' + seg : '')};
+  }
+  if(sub && !seg){
+    // L24 section outline on a per-sutta page: mn125.2.3 → mn/mn125/index.html#125.2.3.
+    // Tried for EVERY flat collection, not a list of the ones whose outlines have shipped —
+    // the site is converting book by book and a router that has to be edited per book is a
+    // standing bug. The anchor is the sutta-prefixed ref (n + '.' + sub); resolveAnchor
+    // widens from there (bare #2.3, namespaced "<unit>/125.2.3", nearest ancestor) and
+    // falls back to the page top for a sutta that has no outline yet.
+    const base = nik + n;                              // page = the sutta itself
+    return {nik, page: base, suttaId: base, seg: null,
+            ref: base + '.' + sub, hash: '#' + n + '.' + sub};
+  }
+  if(sub) return {err: nik.toUpperCase()+' refs look like '+nik+n+' or '+nik+n+':2.5'};
+  const base = nik + n;                                // flat: the page IS the sutta
+  return {nik, page: base, suttaId: base, seg, ref: base + (seg ? ':' + seg : '')};
+}
+function flashJumpErr(text){
+  jumpInputEl.classList.add('bad');
+  jumpMsgEl.textContent = text; jumpMsgEl.classList.add('show');
+  setTimeout(()=>{ jumpInputEl.classList.remove('bad'); jumpMsgEl.classList.remove('show'); }, 2200);
+}
+function jumpToRef(ref, opts){
+  ref = (ref || '').trim();
+  // `opts.fromUrl` marks a jump the READER didn't type (the ?q= router below): it still
+  // resolves and navigates identically, but stays out of the recent-jumps list, which is
+  // meant to be a record of what this person looked up, not of links they arrived through.
+  const remember = !(opts && opts.fromUrl);
+  // IN-PAGE shortcut: on a content page (SO defined) you can omit the work's own name and
+  // jump within it — a bare L24 dot-address (`8.4.16`) → this page's anchor; an SC segment
+  // with (`8:216.1`, chapter kept) or without (`:2.1`) the chapter → this page's segment.
+  // Falls through on the homepage/help (no SO).
+  if(typeof SO !== 'undefined'){
+    let hash = null;
+    const r2l = (typeof ROW2LEAF !== 'undefined') ? ROW2LEAF : {};
+    // A TRAILING dot is allowed because it is part of a vagga address (`2.` = Dhp's second
+    // vagga, distinct from verse `2` — see parseJumpRef's chapter branch), and resolveAnchor
+    // matches it exactly, being a real node id.
+    if(/^\d+(\.\d+)*\.?$/.test(ref)){
+      // 8.4.16 → #8.4.16 (L24 anchor). Resolve through the viewer's resolveAnchor rather
+      // than a bare `ref in SO`: a KN book glues its abbreviation onto unit anchors
+      // (cnd's units are cnd0.1 … cnd5.2), so `5.2` typed ON the cnd page is not itself an
+      // id and used to fall through to the cross-page grammar and error out — while the
+      // deeper `5.2.1` worked. resolveAnchor knows every id style, so both land.
+      const node = (typeof resolveAnchor === 'function') ? resolveAnchor(ref)
+                                                        : (ref in SO ? ref : null);
+      if(node) hash = '#' + node;
+    } else if(/^\d+:\d/.test(ref)){                         // 8:216.1 → vism8:216.1 (chapter kept):
+      const key = Object.keys(r2l).find(k =>               //   nik prefix, then exactly this
+        k.endsWith(ref) && /^[a-z-]+$/.test(k.slice(0, k.length - ref.length)));
+      if(key) hash = '#tr-' + key;
+    } else if(/^:\d/.test(ref)){                            // :2.1 → first segment ending :2.1
+      const key = Object.keys(r2l).find(k => k.endsWith(ref));
+      if(key) hash = '#tr-' + key;
+    }
+    if(hash){
+      if(remember) saveJumpHist([ref].concat(loadJumpHist().filter(x=>x!==ref)));
+      jumpInputEl.value = ''; syncJumpClear();               // in-page jump doesn't reload — clear
+      closeJump();
+      if(location.hash === hash){ if(typeof jumpToHash === 'function') jumpToHash(); }
+      else location.hash = hash;                             // fires hashchange → jumpToHash
+      return;
+    }
+  }
+  const r = parseJumpRef(ref);
+  if(!r || r.err){ flashJumpErr((r&&r.err) || 'Type a ref like mn125, dn16, an3.65 or sn22.59'); return; }
+  if(remember) saveJumpHist([r.ref].concat(loadJumpHist().filter(x=>x!==r.ref)));
+  if(r.url !== undefined){ window.location.href = JUMP_ROOT + r.url; closeJump(); return; }
+  let hash = '';
+  if(r.hash !== undefined) hash = r.hash;                      // pre-built (e.g. JUMP_FLAT's)
+  else if(r.seg) hash = '#tr-' + r.suttaId + ':' + r.seg;      // segment deep link
+  else if(r.suttaId && r.suttaId !== r.page) hash = '#' + r.suttaId;  // grouped sutta anchor
+  const page = r.page ? '/' + r.page : '';                    // '' for a flat single-file book
+  window.location.href = JUMP_ROOT + '/' + r.nik + page + '/index.html' + hash;
+  closeJump();   // a SAME-PAGE hash jump doesn't reload, so close the dropdown ourselves
+}
+function renderJumpHist(){
+  const h = loadJumpHist();
+  jumpHistEl.innerHTML = '';
+  h.forEach(ref=>{
+    const d = document.createElement('div');
+    d.textContent = ref;
+    d.onmousedown = ev=>{ ev.preventDefault(); jumpToRef(ref); };
+    jumpHistEl.appendChild(d);
+  });
+  return h.length;
+}
+// ── 🐇 DROPDOWN open/close ──
+// The 🐇 button toggles a dropdown (#jumpPop) holding the input + recent-jumps
+// list; nothing is shown in the bar until then. "/" opens it from anywhere.
+const jumpPopEl = document.getElementById('jumpPop');
+function refreshJumpHist(){
+  const has = renderJumpHist() > 0;                          // (re)build the recent list
+  jumpHistEl.classList.toggle('show', has && !jumpInputEl.value);
+}
+function openJump(){
+  jumpPopEl.classList.add('show');
+  syncJumpClear();
+  refreshJumpHist();
+  jumpInputEl.focus();
+}
+function closeJump(){
+  jumpPopEl.classList.remove('show');
+  jumpHistEl.classList.remove('show');
+  jumpMsgEl.classList.remove('show');
+  jumpInputEl.classList.remove('bad');
+}
+function toggleJump(){ jumpPopEl.classList.contains('show') ? closeJump() : openJump(); }
+
+jumpInputEl.addEventListener('keydown', ev=>{
+  if(ev.key === 'Enter') jumpToRef(jumpInputEl.value);
+  else if(ev.key === 'Escape'){
+    if(jumpInputEl.value){                                   // clear, keep the dropdown open
+      ev.stopPropagation();                                  // don't let the global handler close it
+      jumpInputEl.value=''; syncJumpClear(); refreshJumpHist();
+    } else closeJump();                                      // already empty → dismiss
+  }
+});
+jumpInputEl.addEventListener('input', ()=>{ syncJumpClear(); refreshJumpHist(); });
+if(jumpClearEl) jumpClearEl.onclick = ()=>{
+  jumpInputEl.value = ''; syncJumpClear(); refreshJumpHist(); jumpInputEl.focus();
+};
+document.getElementById('jumpBtn').onclick = toggleJump;
+
+// Press "/" anywhere (outside a text field) to open the quick-jump dropdown.
+document.addEventListener('keydown', ev=>{
+  if(ev.key !== '/' || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  const t = ev.target, tag = (t.tagName||'').toLowerCase();
+  if(tag==='input' || tag==='textarea' || tag==='select' || (t && t.isContentEditable)) return;
+  ev.preventDefault();
+  openJump();
+});
+// Esc closes even when focus isn't in the box; a click outside dismisses it.
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') closeJump(); });
+document.addEventListener('click', ev=>{
+  if(jumpPopEl.classList.contains('show') && !ev.target.closest('#jump')) closeJump();
+});
+
+// ── ?q=<ref> — the 🐇 box, driven from the URL ──
+// A #hash can only deep-link WITHIN a page that's already been chosen, so a citation from
+// outside the site can't use one: whoever links to mn125 would have to know it lives at
+// mn/mn125/, an3.65 at an/an3/#3.65, dhp1 at kn/dhp/#1. ?q=<ref> hands the ref to the same
+// parseJumpRef the jump box uses, so ANY page + ?q= resolves a citation and routes itself —
+// the homepage becomes a citation resolver, and `<root>/?q=%s` registers as a browser
+// keyword search. The query string needs no server support: a static host ignores it.
+//
+// On DOMContentLoaded rather than inline, because on viewer pages this JS is inlined BEFORE
+// the init that populates SO/ROW2LEAF, renders, and calls jumpToHash() — an in-page ref
+// resolved any earlier would search an empty index, and a ?q= naming a spot on THIS page has
+// to win over the page's own #hash, so it must also land after jumpToHash has run.
+document.addEventListener('DOMContentLoaded', ()=>{
+  const q = (new URLSearchParams(location.search).get('q') || '').trim();
+  if(!q) return;
+  // Strip q BEFORE jumping. A cross-page ref navigates away and drops it anyway, but an
+  // in-page ref only sets location.hash — which would leave ?q= sitting in the address bar,
+  // so a URL the reader copied AFTERWARDS would re-run the original jump on load and
+  // override the hash it appears to point at.
+  try{
+    const u = new URL(location.href);
+    u.searchParams.delete('q');
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  }catch(e){/* replaceState is refused on file:// in some browsers — still jump */}
+  // Put the ref in the box and open the dropdown BEFORE jumping: a ref that resolves closes
+  // it (or navigates away) in this same tick, and one that doesn't is left on screen beside
+  // flashJumpErr's complaint — which renders inside the pop and would otherwise be invisible,
+  // making a mistyped citation link look like a page that simply ignored it.
+  jumpInputEl.value = q; syncJumpClear();
+  openJump();
+  jumpToRef(q, {fromUrl: true});
+  // Resolved in-page → the pop is shut, but focus would still sit in the jump input and eat
+  // the reader's first keystrokes (and the viewer's "/" and Esc bindings).
+  if(!jumpPopEl.classList.contains('show')) jumpInputEl.blur();
+});
+
+// ── THEME + FONT PREFS (shared with the sutta viewer via debabel.viewer.v1) ──
+const PREFS_KEY = 'debabel.viewer.v1';
+const PREFS_FS_MIN = 11, PREFS_FS_MAX = 22;
+let prefTheme = 'light', prefFs = 15;
+function loadPrefs(){
+  try{
+    const s = JSON.parse(localStorage.getItem(PREFS_KEY)) || {};
+    if(s.theme==='dark'||s.theme==='light') prefTheme = s.theme;
+    if(typeof s.fs==='number') prefFs = Math.min(PREFS_FS_MAX, Math.max(PREFS_FS_MIN, s.fs));
+  }catch(e){}
+}
+function savePrefs(){
+  try{
+    let s = {};
+    try{ s = JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; }catch(e){ s = {}; }
+    s.theme = prefTheme; s.fs = prefFs;   // merge — never clobber colsBy/sidebar
+    localStorage.setItem(PREFS_KEY, JSON.stringify(s));
+  }catch(e){}
+}
+function applyPrefs(){
+  document.documentElement.setAttribute('data-theme', prefTheme);
+  document.documentElement.style.fontSize = prefFs + 'px';
+  const tb = document.getElementById('siteThemeBtn');
+  if(tb) tb.textContent = prefTheme==='dark'?'☾ Dark':'☀ Light';
+}
+function siteToggleTheme(){ prefTheme = prefTheme==='dark'?'light':'dark'; savePrefs(); applyPrefs(); }
+function siteAdjustFont(d){
+  prefFs = Math.min(PREFS_FS_MAX, Math.max(PREFS_FS_MIN, prefFs + d));
+  savePrefs(); applyPrefs();
+}
+// ── ⚙ SETTINGS POPOVER ──
+function siteToggleSettings(){
+  document.getElementById('siteSettingsPop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('siteSettingsPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteSettingsWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('siteSettingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+// ── ⋮ MORE POPOVER (Help) ──
+function siteToggleMore(){
+  document.getElementById('siteMorePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('siteMorePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteMoreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('siteMorePop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+loadPrefs(); applyPrefs();
+
+
+// ── ☰ SIDEBAR TOGGLE (persisted; auto-hidden on narrow viewports) ──
+const HELP_TOC_KEY = 'debabel.help.toc';
+function helpSetSidebar(hidden){
+  document.getElementById('sidebar').classList.toggle('hidden', hidden);
+  document.getElementById('main').classList.toggle('full', hidden);
+  const ft = document.getElementById('siteFooter');
+  if(ft) ft.classList.toggle('full', hidden);
+  const btn = document.getElementById('tocBtn');
+  if(btn) btn.classList.toggle('on', !hidden);
+  try{ localStorage.setItem(HELP_TOC_KEY, hidden ? '1' : '0'); }catch(e){}
+}
+function toggleHelpSidebar(){
+  helpSetSidebar(!document.getElementById('sidebar').classList.contains('hidden'));
+}
+(function(){
+  let saved = null;
+  try{ saved = localStorage.getItem(HELP_TOC_KEY); }catch(e){}
+  if(saved === '1' || saved === '0') helpSetSidebar(saved === '1');
+  else helpSetSidebar(window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
+})();
+// ── TOC collapse / expand all ──
+function tocSetAll(open){
+  document.querySelectorAll('#sidebar details.toc-node').forEach(d => { d.open = open; });
+}
+
+</script>
+
+
+</body></html>

@@ -1,0 +1,951 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head>
+<meta charset="UTF-8">
+<title>Vin-a — Samantapāsādikā (Vinaya Commentary)</title>
+<link rel="icon" type="image/png" href="../../favicon.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#faf8f4;--text:#000;--accent:#5c3d1e;--muted:#6b6055;--border:#ddd6c8;
+  --card:#fff;--head:#f0ebe0;--row-line:#eee2d0;--hover:#faf5e8;
+  --bar:#ede5d4;--bar-border:#c8b89a}
+[data-theme="dark"]{--bg:#000;--text:#e8dfc8;--accent:#c8a060;--muted:#9a8878;
+  --border:#3a3028;--card:#231e18;--head:#2a2418;--row-line:#3a3028;--hover:#2a2418;
+  --bar:#201a12;--bar-border:#4a3c2c}
+.navbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;flex-wrap:wrap;
+  gap:.45rem;background:var(--bar);
+  border-bottom:1px solid var(--bar-border);padding:.4rem .9rem;
+  box-shadow:0 1px 6px rgba(0,0,0,.15);transition:background .2s}
+.nav-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--bar-border);border-radius:5px;background:var(--bg);
+  color:var(--accent);cursor:pointer;font-size:1rem;line-height:1;transition:background .12s}
+.nav-btn:hover{background:var(--hover)}
+.settings-wrap{position:relative;display:flex;align-items:center}
+.settings-pop{position:absolute;top:120%;right:0;z-index:500;display:none;
+  min-width:13rem;padding:.5rem .6rem;background:var(--card);color:var(--text);
+  border:1px solid var(--bar-border);border-radius:6px;
+  box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.settings-pop.show{display:block}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.3rem 0}
+.set-row + .set-row{border-top:1px solid var(--border)}
+.set-lbl{font-size:.82rem;font-family:sans-serif;color:var(--text);white-space:nowrap}
+.set-ctl{display:flex;align-items:center;gap:.25rem}
+.settings-pop .nav-btn{width:auto;min-width:30px;padding:0 .45rem}
+.set-help{text-decoration:none;white-space:nowrap}
+.bar-crumbs{display:flex;align-items:center;font-family:sans-serif;font-size:.82rem;
+  margin-right:1.6rem}
+.bar-crumbs a{color:var(--accent);text-decoration:none}
+.bar-crumbs a:hover{text-decoration:underline}
+.bar-crumbs .home-logo{flex-shrink:0;display:block;opacity:.85;transition:opacity .12s}
+.bar-crumbs .home-logo:hover{opacity:1}
+.bar-crumbs .home-logo img{height:56px;width:56px;object-fit:cover;border-radius:10px;
+  box-shadow:0 1px 5px rgba(0,0,0,.3);display:block}
+.bar-crumbs .sep-c{margin:0 .3rem;color:var(--muted)}
+.bar-crumbs .cur{color:var(--text);font-weight:600}
+.bar-crumbs .cur-full{color:var(--muted);margin-left:.5rem;font-style:italic;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jump{position:relative;display:flex;align-items:center}
+.jump-pop{position:absolute;top:120%;left:0;z-index:500;display:none;min-width:13rem;
+  padding:.5rem .55rem;background:var(--card);color:var(--text);
+  border:1px solid var(--bar-border);border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.jump-pop.show{display:block}
+.jump-box{position:relative;display:flex;align-items:center}
+.jump-input{width:100%;box-sizing:border-box;padding:.34rem .5rem;border:1px solid var(--bar-border);
+  border-radius:5px;background:var(--bg);color:var(--text);font-family:monospace;font-size:.85rem}
+.jump-input::placeholder{color:var(--muted);opacity:.7}
+.jump-input:focus{outline:none;border-color:var(--accent)}
+.jump-input.bad{border-color:#b03030;background:#fdf0f0;color:#000}
+.jump-msg{margin-top:.4rem;background:#b03030;color:#fff;font-family:sans-serif;
+  font-size:.72rem;padding:.25rem .55rem;border-radius:4px;display:none}
+.jump-msg.show{display:block}
+.jump-hist{margin-top:.4rem;max-height:50vh;overflow-y:auto;display:none}
+.jump-hist.show{display:block}
+.jump-hist div{padding:.3rem .5rem;font-family:monospace;font-size:.85rem;cursor:pointer;border-radius:4px}
+.jump-hist div:hover{background:var(--hover)}
+
+body{font-family:Georgia,serif;background:var(--bg);color:var(--text);line-height:1.55;padding:0 1.5rem 1.5rem;font-size:1rem;transition:background .2s,color .2s}
+.navbar{margin:0 -1.5rem 1.2rem}
+h1{font-size:1.4rem;font-weight:normal;letter-spacing:.02em;color:var(--accent);margin-bottom:.4rem}
+.sub{font-size:.8rem;color:var(--muted);margin-bottom:.6rem;max-width:62ch}
+.warn-note{font-size:.8rem;color:#b03030;margin-bottom:1rem}
+a{color:var(--accent)}
+
+.ix-list{display:flex;flex-direction:column;gap:.4rem;width:100%;max-width:820px}
+.ix-line{display:flex;gap:.4rem;align-items:stretch}
+.ix-row{flex:1;display:flex;align-items:baseline;gap:.85rem;padding:.55rem .9rem;
+  border:1px solid var(--border);border-radius:6px;background:var(--card);
+  text-decoration:none;color:var(--text);min-width:0;transition:background .15s}
+.ix-row:hover{background:var(--hover);border-color:var(--bar-border)}
+/* greyed-out, non-clickable row (an untranslated text); tooltip explains why */
+.ix-row.off{opacity:.5;cursor:help}
+.ix-row.off:hover{background:var(--card);border-color:var(--border)}
+.ix-ref{font-family:monospace;font-weight:700;color:var(--accent);flex-shrink:0;min-width:3.6rem}
+.ix-title{flex:1;min-width:0}
+.ix-badges{display:flex;gap:.45rem;flex-shrink:0;align-items:baseline}
+.ix-badge{font-size:.72rem;font-family:sans-serif;color:var(--muted);white-space:nowrap}
+.ix-sec{display:flex;align-items:center;padding:0 .75rem;border:1px solid var(--border);
+  border-radius:6px;background:var(--card);text-decoration:none;color:var(--accent);
+  font-size:.78rem;white-space:nowrap;transition:background .15s}
+.ix-sec:hover{background:var(--hover)}
+/* Collapse / Expand-all controls — viewer wording, page-token styling. */
+.ix-controls{display:flex;gap:.4rem;margin:0 0 .9rem;max-width:820px}
+.ix-ctrl-btn{padding:.25rem .6rem;border-radius:5px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);cursor:pointer;font-size:.72rem;
+  font-family:inherit;transition:background .15s;white-space:nowrap}
+.ix-ctrl-btn:hover{background:var(--hover)}
+.ix-ctrl-btn.on{background:var(--hover);border-color:var(--accent);color:var(--accent)}
+/* Collapsible group: clickable header + indented body with a left rule. */
+.ix-grp{display:flex;flex-direction:column;gap:.3rem}
+.ix-gh{display:flex;align-items:center;gap:.45rem;cursor:pointer;padding:.4rem .7rem;
+  background:var(--sec-bg,var(--head));border:1px solid var(--sec-border,var(--border));
+  border-radius:6px;user-select:none}
+.ix-gh:hover{filter:brightness(.97)}
+.ix-gh:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ix-caret{display:inline-block;font-size:.7rem;color:var(--accent);
+  transition:transform .15s;flex-shrink:0}
+.ix-caret::before{content:"\25be"}
+.ix-grp.collapsed>.ix-gh .ix-caret{transform:rotate(-90deg)}
+.ix-gl{font-size:.74rem;font-family:sans-serif;letter-spacing:.04em;text-transform:uppercase;
+  font-weight:700;color:var(--accent);line-height:1.3}
+.ix-gbody{display:flex;flex-direction:column;gap:.4rem;
+  margin-left:.55rem;padding-left:.6rem;border-left:2px solid var(--line,var(--border))}
+.ix-grp.collapsed>.ix-gbody{display:none}
+/* Translator filter bar (MN/DN indexes). */
+.ix-filter{display:flex;gap:.4rem;align-items:center;margin:0 0 .55rem;max-width:820px;flex-wrap:wrap}
+.ix-filter label{font-size:.72rem;color:var(--muted);display:flex;gap:.35rem;align-items:center}
+.ix-filter select{font-family:inherit;font-size:.72rem;padding:.2rem .35rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--card);color:var(--text)}
+
+/* "∥ EBT" per-sutta button + its modal (EBT = Early Buddhist Texts parallels,
+   sourced from SuttaCentral — see debabel.parallels). Modal follows the site's
+   existing centered-dialog-with-backdrop-click-to-close convention. */
+.ix-ebt-btn{flex-shrink:0;display:flex;align-items:center;padding:0 .6rem;
+  border:1px solid var(--border);border-radius:6px;background:var(--card);
+  color:var(--accent);font-size:.72rem;font-family:sans-serif;cursor:pointer;
+  white-space:nowrap;transition:background .15s}
+.ix-ebt-btn:hover{background:var(--hover)}
+
+/* "⛔ EBT" — links to the EBT/LBT classification legend for a book marked as not
+   EBT-compliant (see index_cards._not_ebt_button). Plain link, not a popup. */
+.ix-notebt-btn{flex-shrink:0;display:flex;align-items:center;padding:0 .6rem;
+  border:1px solid #b03030;border-radius:6px;background:var(--card);
+  color:#b03030;font-size:.72rem;font-family:sans-serif;text-decoration:none;
+  white-space:nowrap;transition:background .15s}
+.ix-notebt-btn:hover{background:var(--hover)}
+
+/* "✅ EBT" — links to the EBT/LBT classification legend for a book (or portion of
+   one) called out as EBT-compliant (see index_cards._ebt_ok_button). */
+.ix-ebtok-btn{flex-shrink:0;display:flex;align-items:center;padding:0 .6rem;
+  border:1px solid #2f8a3e;border-radius:6px;background:var(--card);
+  color:#2f8a3e;font-size:.72rem;font-family:sans-serif;text-decoration:none;
+  white-space:nowrap;transition:background .15s}
+.ix-ebtok-btn:hover{background:var(--hover)}
+
+/* "⛔ LBT" — links to the EBT/LBT classification legend for a text marked as a Late
+   Buddhist Text (post-canonical: commentaries/aṭṭhakathā, ṭīkā). See _lbt_button. */
+.ix-lbt-btn{flex-shrink:0;display:flex;align-items:center;padding:0 .6rem;
+  border:1px solid #b03030;border-radius:6px;background:var(--card);
+  color:#b03030;font-size:.72rem;font-family:sans-serif;text-decoration:none;
+  white-space:nowrap;transition:background .15s}
+.ix-lbt-btn:hover{background:var(--hover)}
+
+/* "✅ LBT" — links to the EBT/LBT classification legend for a Late Buddhist Text (or
+   portion) that remains EBT-compliant (see index_cards._lbt_ok_button). */
+.ix-lbtok-btn{flex-shrink:0;display:flex;align-items:center;padding:0 .6rem;
+  border:1px solid #2f8a3e;border-radius:6px;background:var(--card);
+  color:#2f8a3e;font-size:.72rem;font-family:sans-serif;text-decoration:none;
+  white-space:nowrap;transition:background .15s}
+.ix-lbtok-btn:hover{background:var(--hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:700}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:701;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border,var(--border));
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg,var(--head));border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg,var(--card))}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
+.site-footer{padding:1.4rem 1.8rem;border-top:1px solid var(--border);
+  background:var(--head,var(--sec-bg));color:var(--muted);font-family:sans-serif;
+  font-size:.74rem;display:flex;align-items:center;justify-content:space-between;gap:1.6rem}
+.ft-logo{flex-shrink:0;display:block}
+.ft-logo img{height:64px;width:auto;border-radius:10px;display:block}
+.ft-text{flex:1;text-align:center;line-height:1.55;min-width:0}
+.ft-tagline{margin:0;color:var(--text)}
+.ft-links{margin:.45rem 0 0;display:flex;justify-content:center;flex-wrap:wrap;
+  gap:.3rem .9rem;font-family:sans-serif}
+.ft-links a{color:var(--accent);text-decoration:none}
+.ft-links a:hover{text-decoration:underline}
+.ft-copy{margin:.45rem 0 0;opacity:.8}
+
+.site-footer{margin:2.6rem -1.5rem -1.5rem}
+</style>
+
+<script src="../../extra/extra.js"></script>
+
+<meta name="description" content="3 National Pali Canon Editions With Line by Line translations">
+<meta property="og:title" content="4nt DG">
+<meta property="og:description" content="3 National Pali Canon Editions With Line by Line translations">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4nt DG">
+<meta name="twitter:description" content="3 National Pali Canon Editions With Line by Line translations">
+<style>
+    img[src*="headerlogo.png"] { background-color: #ede5d4; padding: 4px; border-radius: 10px; border: 1px solid var(--bar-border); }
+    .home-logo img, img.home-logo { width: 16px; }
+</style></head>
+<body>
+<nav class="navbar">
+  <div class="bar-crumbs"><a class="home-logo" href="../../index.html" title="Home — s.4nt.org"><img src="/assets/img/logo4nt.png" alt="s.4nt.org home"></a><span class="sep-c">›</span><a href="../../lbt_tv/index.html">LBT ⛔</a><span class="sep-c">›</span><span class="cur" title="Vinaya Commentary">Vin-a</span><span class="cur-full">Vinaya Commentary</span></div>
+  <span>  </span>
+  <div class="jump" id="jump">
+    <span class="nav-btn" id="jumpBtn" title="Jump to any sutta:
+• Click 🐇 (or press / anywhere) to open the jump box
+• Type a ref and press Enter — e.g. mn125, an3.65, dhp1
+• Jump to an outline section (L24) — e.g. mn125.2.3
+• A numbered vagga keeps its dot — dhp2. is Dhp's 2nd vagga, dhp2 its 2nd verse
+• Add a segment to land right on it — e.g. mn125:2.5
+• On a page, drop its name — 8.4.16 (L24) or :2.5 (segment) stays here
+• Taishō texts are t0614 — with a section, t0614.1.6.3
+• Shortcuts: home, major, abhi, taisho614
+• Link straight to a ref — put ?q=mn125 on any page's URL
+• Your recent jumps show while the box is empty">🐇</span>
+    <div class="jump-pop" id="jumpPop">
+      <input class="jump-input" id="jumpInput" placeholder="mn125, dn16:2.5…" title="Type a sutta ref (mn125, dn16, mn125:2.5…) and press Enter" autocomplete="off" spellcheck="false" type="search">
+      <div class="jump-msg" id="jumpMsg"></div>
+      <div class="jump-hist" id="jumpHist"></div>
+    </div>
+  </div>
+  <button class="nav-btn" id="topBtn" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="display: none;">🔝</button>
+  <span>  </span>
+  
+                <a class="voice-link icon-btn" id="voiceLinkBtn" data-slug="vin" href="javascript:void(0)" title="Listen (TTS)">🔊</a>
+                <a class="icon-btn" id="viewModeBtn" onclick="window.toggleViewMode()" href="javascript:void(0)" title="View: Columns / Scroll">📜</a>
+                <a class="icon-btn" id="fdg-button" href="https://f.dhamma.gift/read/?q=vin" title="Search Suttas (Ctrl+1)" rel="noreferrer">
+                    <img style="width:18px; height:18px; display:block;" src="/assets/img/gray-white.png" alt="Search">
+                </a>
+                <a class="icon-btn toggle-dict-btn" title="Popup Dictionary (Alt+A)">
+                    <img style="width:18px; height:18px; display:block;" src="/assets/svg/comment.svg" alt="Dictionary">
+                </a><div class="settings-wrap" id="siteSettingsWrap">
+    <button class="nav-btn" id="siteSettingsBtn" title="Settings" onclick="siteToggleSettings()">⚙</button>
+    <div class="settings-pop" id="siteSettingsPop">
+      <div class="set-row">
+        <span class="set-lbl">Text size</span>
+        <span class="set-ctl">
+          <button class="nav-btn" title="Decrease font size" onclick="siteAdjustFont(-1)">A−</button>
+          <button class="nav-btn" title="Increase font size" onclick="siteAdjustFont(+1)">A+</button>
+        </span>
+      </div>
+      <div class="set-row">
+        <span class="set-lbl">Theme</span>
+        <button class="nav-btn" id="siteThemeBtn" title="Toggle dark / light mode" onclick="siteToggleTheme()">☀ Light</button>
+      </div>
+    </div>
+  </div>
+  <div class="settings-wrap" id="siteMoreWrap">
+    <button class="nav-btn" id="siteMoreBtn" title="More" onclick="siteToggleMore()">⋮</button>
+    <div class="settings-pop" id="siteMorePop">
+      <div class="set-row">
+        <span class="set-lbl">Help</span>
+        <a class="nav-btn set-help" href="../../help.html" title="Open the reading guide">❔ Guide</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<h1>Vin-a — Samantapāsādikā</h1>
+<p class="warn-note">⛔ LBT — the Vinaya commentary (aṭṭhakathā) is a
+<strong>Late Buddhist Text</strong>, centuries later than the suttas.
+<a href="../../help.html#ebtlbt-classification-legend">EBT/LBT legend</a>.</p>
+<p class="sub">Line-by-line Pāli + AI Bodhi-esque English, laid out page for page against
+the root Vinaya: each group is one rule / khandhaka / vāra, at the same address the root
+uses. The paragraph number opening a commentary block is the <strong>mūla paragraph
+number</strong> it expounds.</p>
+<div class="ix-filter"><label>Translator filter: <select id="translatorFilter" onchange="translatorFilterApply()"><option value="">All</option><option value="bodhi-esque">Bodhi-esque</option></select></label></div>
+<p class="sub" id="ixStats" data-all="55 pages · 360 commented root units · 26152 lines">55 pages · 360 commented root units · 26152 lines</p>
+<div class="ix-controls"><button type="button" class="ix-ctrl-btn" id="ixCollapse" title="Collapse all sections" onclick="ixToggleAll(false)">− Collapse all</button><button type="button" class="ix-ctrl-btn on" id="ixExpand" title="Expand all sections" onclick="ixToggleAll(true)">+ Expand all</button></div>
+<div class="ix-list">
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="preface/index.html" id="preface"><span class="ix-ref">Preface</span><span class="ix-title">Ganthārambha &amp; Bāhiranidāna — Preamble — the councils and the mission to Laṅkā</span><span class="ix-badges"><span class="ix-badge">1567 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-grp">
+<div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Bhikkhuvibhaṅga — Monks’ Analysis</span></div>
+<div class="ix-gbody">
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bu-vb-as/index.html" id="pli-tv-bu-vb-as"><span class="ix-ref">pli-tv-bu-vb-as-a</span><span class="ix-title">Adhikaraṇasamatha — The Settling of Legal Issues</span><span class="ix-badges"><span class="ix-badge">12 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bu-vb-ay/index.html" id="pli-tv-bu-vb-ay"><span class="ix-ref">pli-tv-bu-vb-ay-a</span><span class="ix-title">Aniyata — Undetermined</span><span class="ix-badges"><span class="ix-badge">90 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bu-vb-np/index.html" id="pli-tv-bu-vb-np"><span class="ix-ref">pli-tv-bu-vb-np-a</span><span class="ix-title">Nissaggiya Pācittiya — Relinquishment with Confession</span><span class="ix-badges"><span class="ix-badge">1785 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bu-vb-pc/index.html" id="pli-tv-bu-vb-pc"><span class="ix-ref">pli-tv-bu-vb-pc-a</span><span class="ix-title">Pācittiya — Confession</span><span class="ix-badges"><span class="ix-badge">2995 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bu-vb-pd/index.html" id="pli-tv-bu-vb-pd"><span class="ix-ref">pli-tv-bu-vb-pd-a</span><span class="ix-title">Pāṭidesanīya — Acknowledgment</span><span class="ix-badges"><span class="ix-badge">77 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bu-vb-pj/index.html" id="pli-tv-bu-vb-pj"><span class="ix-ref">pli-tv-bu-vb-pj-a</span><span class="ix-title">Pārājika — Expulsion</span><span class="ix-badges"><span class="ix-badge">7458 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bu-vb-sk/index.html" id="pli-tv-bu-vb-sk"><span class="ix-ref">pli-tv-bu-vb-sk-a</span><span class="ix-title">Sekhiya — Rules of Training</span><span class="ix-badges"><span class="ix-badge">228 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bu-vb-ss/index.html" id="pli-tv-bu-vb-ss"><span class="ix-ref">pli-tv-bu-vb-ss-a</span><span class="ix-title">Saṅghādisesa — Suspension</span><span class="ix-badges"><span class="ix-badge">2018 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+</div></div>
+<div class="ix-grp">
+<div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Bhikkhunīvibhaṅga — Nuns’ Analysis</span></div>
+<div class="ix-gbody">
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bi-vb-np/index.html" id="pli-tv-bi-vb-np"><span class="ix-ref">pli-tv-bi-vb-np-a</span><span class="ix-title">NissaggiyaPācittiya — Relinquishment with Confession</span><span class="ix-badges"><span class="ix-badge">89 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bi-vb-pc/index.html" id="pli-tv-bi-vb-pc"><span class="ix-ref">pli-tv-bi-vb-pc-a</span><span class="ix-title">Pācittiya — Confession</span><span class="ix-badges"><span class="ix-badge">697 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bi-vb-pd/index.html" id="pli-tv-bi-vb-pd"><span class="ix-ref">pli-tv-bi-vb-pd-a</span><span class="ix-title">Pāṭidesanīya — Acknowledgment</span><span class="ix-badges"><span class="ix-badge">22 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bi-vb-pj/index.html" id="pli-tv-bi-vb-pj"><span class="ix-ref">pli-tv-bi-vb-pj-a</span><span class="ix-title">Pārājika — Expulsion</span><span class="ix-badges"><span class="ix-badge">152 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-bi-vb-ss/index.html" id="pli-tv-bi-vb-ss"><span class="ix-ref">pli-tv-bi-vb-ss-a</span><span class="ix-title">Saṅghādisesa — Suspension</span><span class="ix-badges"><span class="ix-badge">209 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+</div></div>
+<div class="ix-grp">
+<div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Khandhaka — Chapters</span></div>
+<div class="ix-gbody">
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd1/index.html" id="pli-tv-kd1"><span class="ix-ref">pli-tv-kd1-a</span><span class="ix-title">Mahākhandhaka — The great chapter</span><span class="ix-badges"><span class="ix-badge">1526 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd10/index.html" id="pli-tv-kd10"><span class="ix-ref">pli-tv-kd10-a</span><span class="ix-title">Kosambakakkhandhaka — The chapter on division in the Sangha</span><span class="ix-badges"><span class="ix-badge">138 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd11/index.html" id="pli-tv-kd11"><span class="ix-ref">pli-tv-kd11-a</span><span class="ix-title">Kammakkhandhaka — The chapter on penalty procedures</span><span class="ix-badges"><span class="ix-badge">102 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd12/index.html" id="pli-tv-kd12"><span class="ix-ref">pli-tv-kd12-a</span><span class="ix-title">Pārivāsikakkhandhaka — The chapter on the proper conduct for those who have committed an offense entailing suspension</span><span class="ix-badges"><span class="ix-badge">196 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd13/index.html" id="pli-tv-kd13"><span class="ix-ref">pli-tv-kd13-a</span><span class="ix-title">Samuccayakkhandhaka — The chapter on legal procedures in relation to offenses entailing suspension</span><span class="ix-badges"><span class="ix-badge">336 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd14/index.html" id="pli-tv-kd14"><span class="ix-ref">pli-tv-kd14-a</span><span class="ix-title">Samathakkhandhaka — The chapter on the settling of legal issues</span><span class="ix-badges"><span class="ix-badge">146 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd15/index.html" id="pli-tv-kd15"><span class="ix-ref">pli-tv-kd15-a</span><span class="ix-title">Khuddakavatthukkhandhaka — The chapter on minor topics</span><span class="ix-badges"><span class="ix-badge">297 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd16/index.html" id="pli-tv-kd16"><span class="ix-ref">pli-tv-kd16-a</span><span class="ix-title">Senāsanakkhandhaka — The chapter on resting places</span><span class="ix-badges"><span class="ix-badge">946 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd17/index.html" id="pli-tv-kd17"><span class="ix-ref">pli-tv-kd17-a</span><span class="ix-title">Saṁghabhedakakkhandhaka — The chapter on schism in the Sangha</span><span class="ix-badges"><span class="ix-badge">122 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd18/index.html" id="pli-tv-kd18"><span class="ix-ref">pli-tv-kd18-a</span><span class="ix-title">Vattakkhandhaka — The chapter on proper conduct</span><span class="ix-badges"><span class="ix-badge">135 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd19/index.html" id="pli-tv-kd19"><span class="ix-ref">pli-tv-kd19-a</span><span class="ix-title">Pātimokkhaṭṭhapanakkhandhaka — The chapter on the cancellation of the Monastic Code</span><span class="ix-badges"><span class="ix-badge">71 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd2/index.html" id="pli-tv-kd2"><span class="ix-ref">pli-tv-kd2-a</span><span class="ix-title">Uposathakkhandhaka — The chapter on the observance day</span><span class="ix-badges"><span class="ix-badge">619 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd20/index.html" id="pli-tv-kd20"><span class="ix-ref">pli-tv-kd20-a</span><span class="ix-title">Bhikkhunikkhandhaka — The chapter on nuns</span><span class="ix-badges"><span class="ix-badge">117 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd21/index.html" id="pli-tv-kd21"><span class="ix-ref">pli-tv-kd21-a</span><span class="ix-title">Pañcasatikakkhandhaka — The chapter on the first council</span><span class="ix-badges"><span class="ix-badge">15 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd22/index.html" id="pli-tv-kd22"><span class="ix-ref">pli-tv-kd22-a</span><span class="ix-title">Sattasatikakkhandhaka — The chapter on the second council</span><span class="ix-badges"><span class="ix-badge">49 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd3/index.html" id="pli-tv-kd3"><span class="ix-ref">pli-tv-kd3-a</span><span class="ix-title">Vassūpanāyikakkhandhaka — The chapter on entering the rainy-season residence</span><span class="ix-badges"><span class="ix-badge">125 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd4/index.html" id="pli-tv-kd4"><span class="ix-ref">pli-tv-kd4-a</span><span class="ix-title">Pavāraṇākkhandhaka — The chapter on the invitation ceremony</span><span class="ix-badges"><span class="ix-badge">125 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd5/index.html" id="pli-tv-kd5"><span class="ix-ref">pli-tv-kd5-a</span><span class="ix-title">Cammakkhandhaka — The chapter on skins</span><span class="ix-badges"><span class="ix-badge">205 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd6/index.html" id="pli-tv-kd6"><span class="ix-ref">pli-tv-kd6-a</span><span class="ix-title">Bhesajjakkhandhaka — The chapter on medicines</span><span class="ix-badges"><span class="ix-badge">343 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd7/index.html" id="pli-tv-kd7"><span class="ix-ref">pli-tv-kd7-a</span><span class="ix-title">Kathinakkhandhaka — The chapter on the robe-making ceremony</span><span class="ix-badges"><span class="ix-badge">170 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd8/index.html" id="pli-tv-kd8"><span class="ix-ref">pli-tv-kd8-a</span><span class="ix-title">Cīvarakkhandhaka — The chapter on robes</span><span class="ix-badges"><span class="ix-badge">612 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-kd9/index.html" id="pli-tv-kd9"><span class="ix-ref">pli-tv-kd9-a</span><span class="ix-title">Campeyyakkhandhaka — The chapter on legal procedures</span><span class="ix-badges"><span class="ix-badge">58 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+</div></div>
+<div class="ix-grp">
+<div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Parivāra — The Compendium</span></div>
+<div class="ix-gbody">
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr1/index.html" id="pli-tv-pvr1"><span class="ix-ref">pli-tv-pvr1-a</span><span class="ix-title">Parivāra 1 — The Compendium 1</span><span class="ix-badges"><span class="ix-badge">60 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr10/index.html" id="pli-tv-pvr10"><span class="ix-ref">pli-tv-pvr10-a</span><span class="ix-title">Gāthāsaṅgaṇika — Verses on the training rules</span><span class="ix-badges"><span class="ix-badge">133 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr11/index.html" id="pli-tv-pvr11"><span class="ix-ref">pli-tv-pvr11-a</span><span class="ix-title">Adhikaraṇabheda — Various aspects of the four kinds of legal issues</span><span class="ix-badges"><span class="ix-badge">112 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr12/index.html" id="pli-tv-pvr12"><span class="ix-ref">pli-tv-pvr12-a</span><span class="ix-title">Codanādipucchāvissajjanā — Verses on how to accuse properly</span><span class="ix-badges"><span class="ix-badge">48 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr13/index.html" id="pli-tv-pvr13"><span class="ix-ref">pli-tv-pvr13-a</span><span class="ix-title">Codanākaṇḍa — Accusations and the process of investigation</span><span class="ix-badges"><span class="ix-badge">42 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr14/index.html" id="pli-tv-pvr14"><span class="ix-ref">pli-tv-pvr14-a</span><span class="ix-title">Anuvijjakassapaṭipatti — The short chapter on the resolution of conflicts</span><span class="ix-badges"><span class="ix-badge">98 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr15/index.html" id="pli-tv-pvr15"><span class="ix-ref">pli-tv-pvr15-a</span><span class="ix-title">Mahāsaṅgāma — The great chapter on the resolution of conflicts</span><span class="ix-badges"><span class="ix-badge">30 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr16/index.html" id="pli-tv-pvr16"><span class="ix-ref">pli-tv-pvr16-a</span><span class="ix-title">Kathinabheda — The robe-making ceremony</span><span class="ix-badges"><span class="ix-badge">56 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr17/index.html" id="pli-tv-pvr17"><span class="ix-ref">pli-tv-pvr17-a</span><span class="ix-title">Upālipañcaka — Ven. Upāli questions the Buddha</span><span class="ix-badges"><span class="ix-badge">191 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr18/index.html" id="pli-tv-pvr18"><span class="ix-ref">pli-tv-pvr18-a</span><span class="ix-title">Atthāpattisamuṭṭhāna — The origination of offenses</span><span class="ix-badges"><span class="ix-badge">13 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr19/index.html" id="pli-tv-pvr19"><span class="ix-ref">pli-tv-pvr19-a</span><span class="ix-title">Dutiyagāthāsaṅgaṇika — Verses on offenses, training rules, and legal procedures</span><span class="ix-badges"><span class="ix-badge">160 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr20/index.html" id="pli-tv-pvr20"><span class="ix-ref">pli-tv-pvr20-a</span><span class="ix-title">Sedamocanagāthā — The sudorific verses</span><span class="ix-badges"><span class="ix-badge">91 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr21/index.html" id="pli-tv-pvr21"><span class="ix-ref">pli-tv-pvr21-a</span><span class="ix-title">Pañcavagga — Legal procedures, why the Monastic Law, resolution of legal issues</span><span class="ix-badges"><span class="ix-badge">398 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr3/index.html" id="pli-tv-pvr3"><span class="ix-ref">pli-tv-pvr3-a</span><span class="ix-title">Samuṭṭhānasīsasaṅkhepa — The thirteen groups of originations of offenses</span><span class="ix-badges"><span class="ix-badge">168 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr4/index.html" id="pli-tv-pvr4"><span class="ix-ref">pli-tv-pvr4-a</span><span class="ix-title">Antarapeyyāla — Various topics with a focus on the origination of offenses</span><span class="ix-badges"><span class="ix-badge">86 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr6/index.html" id="pli-tv-pvr6"><span class="ix-ref">pli-tv-pvr6-a</span><span class="ix-title">Khandhakapucchāvāra — The classes of offenses in the Chapters</span><span class="ix-badges"><span class="ix-badge">27 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr7/index.html" id="pli-tv-pvr7"><span class="ix-ref">pli-tv-pvr7-a</span><span class="ix-title">Ekuttarikanaya — The numerical method</span><span class="ix-badges"><span class="ix-badge">564 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr8/index.html" id="pli-tv-pvr8"><span class="ix-ref">pli-tv-pvr8-a</span><span class="ix-title">Uposathādipucchāvissajjanā — Aspects of the legal procedures</span><span class="ix-badges"><span class="ix-badge">11 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+<div class="ix-line" data-has="bodhi-esque"><a class="ix-row" href="pli-tv-pvr9/index.html" id="pli-tv-pvr9"><span class="ix-ref">pli-tv-pvr9-a</span><span class="ix-title">Atthavasapakaraṇa — The ten reasons for the laying down of training rules</span><span class="ix-badges"><span class="ix-badge">12 lines</span></span></a><a class="ix-lbt-btn" href="../../help.html#ebtlbt-classification-legend" title="Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas">⛔ LBT</a></div>
+</div></div>
+</div>
+
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden="">
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">✕</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="/assets/img/logo4nt.png" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Aug 06, 2026 at 06:13 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<script>
+const JUMP_ROOT = '../..';
+// ── 🐇 QUICK-JUMP (shared source: quickjump.py) ──
+const JUMP_KEY = 'debabel.jump.v1';
+const JUMP_MAX = 20;
+const JUMP_LIMITS = {"mn": 152, "dn": 34, "an": 11, "sn": 56, "ma": 222, "da": 30, "sa": 1362, "ea": 52, "kp": 9, "dhp": 423, "ud": 8, "iti": 112, "snp": 5, "vv": 85, "pv": 51, "thag": 21, "thig": 16, "tha-ap": 563, "thi-ap": 40, "bv": 29, "cp": 35, "ja": 547, "mnd": 16, "cnd": 23, "ps": 3, "ne": 37, "pe": 9, "mil": 8, "ds": 2, "vb": 18, "dt": 2, "pp": 2, "kv": 23, "ya": 10, "patthana": 24, "arv": 28, "vimt": 12, "mn-a": 152, "mn-t": 152, "dn-a": 34, "dn-t": 34, "an-a": 11, "sn-a": 56, "an-t": 11, "sn-t": 56, "kp-a": 9, "dhp-a": 423, "ud-a": 80, "iti-a": 112, "snp-a": 70, "vv-a": 85, "pv-a": 51, "thag-a": 264, "thig-a": 67, "cp-a": 35, "bv-a": 27, "tha-ap-a": 237, "vism": 23, "vism-t": 23, "vsg": 258, "vsg-t": 256, "vnv": 3183, "vnv-t": 3183, "uv": 970, "uv-t": 965, "khs": 476, "khs-pt": 473, "khs-at": 475, "mls": 128, "mls-t": 116, "bmc": 2, "ja-a": 547};   // supported collections (single source: quickjump.LIMITS)
+const JUMP_GROUPED = {"an": 1, "ea": 1, "sn": 1}; // niks addressed two-level (an3.65) → one page per book
+const JUMP_KN = {"bv": 1, "cnd": 1, "cp": 1, "dhp": 1, "iti": 1, "ja": 1, "kp": 1, "mil": 1, "mnd": 1, "ne": 1, "pe": 1, "ps": 1, "pv": 1, "snp": 1, "tha-ap": 1, "thag": 1, "thi-ap": 1, "thig": 1, "ud": 1, "vv": 1};           // KN books → one page per book at kn/<abbr>/ (full ref = anchor)
+const JUMP_KN_BARE = {"dhp": 1, "iti": 1}; // …except these, whose anchors are bare addresses (dhp21 → #21)
+const JUMP_AB = {"ds": 1, "dt": 1, "kv": 1, "patthana": 1, "pp": 1, "vb": 1, "ya": 1};           // Abhidhamma books → one page per book at tv_ab/<abbr>/
+const JUMP_RANGE = {"sa": 100};     // flat ref → numeric-range unit page (sa)
+const JUMP_FLAT = {"arv": 1, "vimt": 1};       // single-file whole-collection books (arv) → <nik>/index.html
+const JUMP_CMY = {"mn-a": {"dir": "cmy/mn", "bound": 152}, "mn-t": {"dir": "scmy/mn", "bound": 152}, "dn-a": {"dir": "cmy/dn", "bound": 34}, "dn-t": {"dir": "scmy/dn", "bound": 34}};         // commentary/ṭīkā: mn-a1 → cmy/mn/mn1/, mn-t1 → scmy/mn/mn1/
+const JUMP_CMY_GROUPED = {"an-a": {"dir": "cmy/an", "bound": 11}, "sn-a": {"dir": "cmy/sn", "bound": 56}, "an-t": {"dir": "scmy/an", "bound": 11}, "sn-t": {"dir": "scmy/sn", "bound": 56}};  // grouped commentary: an-a3.65 → cmy/an/an3/#an-a3.65
+const JUMP_CMY_KN = {"kp-a": {"dir": "cmy/kn", "bound": 9}, "dhp-a": {"dir": "cmy/kn", "bound": 423}, "ud-a": {"dir": "cmy/kn", "bound": 80}, "iti-a": {"dir": "cmy/kn", "bound": 112}, "snp-a": {"dir": "cmy/kn", "bound": 70}, "vv-a": {"dir": "cmy/kn", "bound": 85}, "pv-a": {"dir": "cmy/kn", "bound": 51}, "thag-a": {"dir": "cmy/kn", "bound": 264}, "thig-a": {"dir": "cmy/kn", "bound": 67}, "cp-a": {"dir": "cmy/kn", "bound": 35}, "bv-a": {"dir": "cmy/kn", "bound": 27}, "tha-ap-a": {"dir": "cmy/kn", "bound": 237}};    // KN per-book commentary: kp-a5 → cmy/kn/kp/index.html#kp-a5
+const JUMP_CMY_TREATISE = {"vism": {"dir": "cmy/vism", "bound": 23}, "vism-t": {"dir": "scmy/vism", "bound": 23}, "vsg": {"dir": "cmy/vsg", "bound": 258}, "vsg-t": {"dir": "scmy/vsg-t", "bound": 256}, "vnv": {"dir": "cmy/vnv", "bound": 3183}, "vnv-t": {"dir": "scmy/vnv-t", "bound": 3183}, "uv": {"dir": "cmy/uv", "bound": 970}, "uv-t": {"dir": "scmy/uv-t", "bound": 965}, "khs": {"dir": "cmy/khs", "bound": 476}, "khs-pt": {"dir": "scmy/khs-pt", "bound": 473}, "khs-at": {"dir": "scmy/khs-at", "bound": 475}, "mls": {"dir": "cmy/mls", "bound": 128}, "mls-t": {"dir": "scmy/mls-t", "bound": 116}, "bmc": {"dir": "misc/bmc", "bound": 2}};  // treatise: vism17 → cmy/vism/index.html#vism17
+const JUMP_JA_RANGES = [[1,1,150], [2,151,250], [3,251,300], [4,301,350], [5,351,375], [6,376,395], [7,396,416], [8,417,426], [9,427,438], [10,439,454], [11,455,463], [12,464,473], [13,474,483], [14,484,496], [15,497,510], [16,511,520], [17,521,525], [18,526,528], [19,529,530], [20,531,532], [21,533,537], [22,538,547]];  // Jātaka: ja-a265 → cmy/kn/ja/ja{nip}/index.html#ja-a265
+const JUMP_TAISHO = {"t0613": 1, "t0614": 1, "t0615": 1, "t0616": 1, "t0617": 1, "t1536": 1, "t1537": 1, "t1538": 1, "t1539": 1, "t1540": 1, "t1542": 1, "t1544": 1, "t1545": 1, "t1548": 1, "t1579": 1};    // Taishō texts: t0613 → taisho/t0613/index.html#<section>
+const jumpInputEl = document.getElementById('jumpInput');
+const jumpMsgEl = document.getElementById('jumpMsg');
+const jumpHistEl = document.getElementById('jumpHist');
+const jumpClearEl = document.getElementById('jumpClear');   // null on pages without a clear button
+function syncJumpClear(){ if(jumpClearEl) jumpClearEl.hidden = !jumpInputEl.value; }
+function loadJumpHist(){
+  try{ const h = JSON.parse(localStorage.getItem(JUMP_KEY)); return Array.isArray(h)?h:[]; }
+  catch(e){ return []; }
+}
+function saveJumpHist(h){
+  try{ localStorage.setItem(JUMP_KEY, JSON.stringify(h.slice(0, JUMP_MAX))); }catch(e){}
+}
+function vinPage(ref){
+  // Theravāda Vinaya ref → its sub-unit PAGE id (folder under vin/tv/).
+  let m;
+  if(m=/^(pli-tv-b[iu]-pm)/.exec(ref)) return m[1];          // pātimokkha → the whole-code page
+  if(m=/^(pli-tv-b[iu]-vb-[a-z]+)/.exec(ref)) return m[1];   // vibhaṅga rule → its offense-class page
+  if(m=/^(pli-tv-pvr\d+)/.exec(ref)) return m[1];            // parivāra → its chapter page
+  if(m=/^(pli-tv-kd\d+)/.exec(ref)) return m[1];             // khandhaka page
+  return ref;
+}
+function parseJumpRef(raw){
+  // Named destinations & aliases — a bare keyword (optional leading "/", e.g. /home)
+  // that returns a ready-made URL (r.url, relative to JUMP_ROOT) instead of the
+  // nik/page form. Site landing pages, not texts.
+  const kw = (raw||'').trim().toLowerCase().replace(/^\//, '');
+  const NAMED = {home: '/index.html', major: '/major/index.html', taisho: '/taisho/index.html',
+                 abhi: '/tv_ab/index.html'};
+  if(kw in NAMED) return {url: NAMED[kw], ref: kw};
+  // Taishō alias: taisho614 / taisho0614 → the t<4-digit> page
+  // (T0614 → dist/taisho/t0614/, nested under the sub-index — taisho_texts.DIST_PARENT).
+  // Accepts the number with or without leading zeros; the folder is zero-padded to 4.
+  // A dotted tail is an L24 section on that page (taisho614.1.6.3 → …#1.6.3) — the same
+  // destination the canonical `t0614.1.6.3` form below reaches, so a reader who thinks in
+  // "Taishō 614" and one who pastes a citation land in the same place. The hash is appended
+  // to the url here rather than returned separately: jumpToRef's `r.url` branch navigates
+  // straight to it and never looks at r.hash.
+  let tm;
+  if(tm = /^taisho\s*0*(\d+)((?:\.\d+[a-z]?)*)$/.exec(kw)){
+    return {url: '/taisho/t' + tm[1].padStart(4, '0') + '/index.html'
+                 + (tm[2] ? '#' + tm[2].slice(1) : ''),
+            ref: 'taisho' + tm[1] + tm[2]};
+  }
+  // Taishō text page (taisho_texts.TEXTS): t0613 → taisho/t0613/index.html;
+  //   t0613.1.19.1 → …#1.19.1 (L24 section — a Taishō page's anchors are BARE dotted
+  //   addresses whose leading component is the juan, or the 品 chapter for a `pin` text,
+  //   0 being the injected front matter);
+  //   t0613:0.1 → …#tr-t0613:0.1 (segment).
+  // Its OWN regex rather than the general nik+number one below, for two reasons: "t" is a
+  // page-id prefix, not a collection with a numeric bound (the published numbers are a set,
+  // so an absent one must say so rather than be measured against a ceiling), and a 品 id
+  // may carry a LETTER — T1548's 序 appendix is section "0a" and its subsections "0a.1",
+  // which no purely numeric grammar can express.
+  const tt = /^\s*t\s*0*(\d+)(?:\.(\d+[a-z]?(?:\.\d+)*))?\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i
+             .exec(raw||'');
+  if(tt){
+    const page = 't' + tt[1].padStart(4, '0');
+    const tsub = tt[2] ? tt[2].toLowerCase() : null, tseg = tt[3] || null;
+    if(!(page in JUMP_TAISHO))
+      return {err: 'Taishō ' + parseInt(tt[1], 10) + ' is not available yet'};
+    return {nik: 'taisho', page, suttaId: page, seg: tseg,
+            ref: page + (tsub ? '.' + tsub : '') + (tseg ? ':' + tseg : ''),
+            hash: tseg ? undefined : (tsub ? '#' + tsub : '')};
+  }
+  // Vinaya COMMENTARY (cmy/vin) / SUBCOMMENTARY (scmy/vin): the root's own address with
+  // "-a" / "-t" appended — the commentary is laid out page for page against the root, so
+  //   pli-tv-bu-vb-np1-a → cmy/vin/pli-tv-bu-vb-np/index.html#pli-tv-bu-vb-np1-a
+  //   pli-tv-kd1-a       → cmy/vin/pli-tv-kd1/index.html (the page itself)
+  //   pli-tv-bu-vb-np1-a:3.2 → …#tr-pli-tv-bu-vb-np1-a:3.2 (segment)
+  //   pli-tv-vi-a-pre    → cmy/vin/preface/index.html (the Bāhiranidāna, which comments on
+  //                        no rule and so has no root page of its own)
+  // Must precede the root-Vinaya branch: its `[a-z-]*` would swallow the "-a" and route a
+  // commentary ref to the root page.
+  // `-a` the Samantapāsādikā, `-t` the Sāratthadīpanī, and one suffix per further
+  // subcommentary — each in its own directory (see build_vin_cmy.LAYERS).
+  const VIN_LAYER_DIR = {a: 'cmy/vin', t: 'scmy/vin', vjb: 'scmy/vin_vjb',
+                         vmv: 'scmy/vin_vmv', pcy: 'scmy/vin_pcy'};
+  const vc = /^\s*(pli-tv-[a-z][a-z-]*?(?:\d[\d.-]*)?)-(a|t|vjb|vmv|pcy)(-pre)?\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i
+             .exec(raw||'');
+  if(vc){
+    const fid = vc[1].toLowerCase(), layer = vc[2].toLowerCase();
+    const pre = !!vc[3], seg = vc[4] || null;
+    const unit = fid + '-' + layer + (pre ? '-pre' : '');
+    return {nik: VIN_LAYER_DIR[layer],
+            page: pre ? 'preface' : vinPage(fid), suttaId: unit, seg,
+            ref: unit + (seg ? ':' + seg : '')};
+  }
+  // Vinaya (vin/tv): pli-tv-bu-vb-pj1 → vin/tv/pli-tv-bu-vb-pj/index.html#pli-tv-bu-vb-pj1
+  //                  pli-tv-kd1 → that page top; pli-tv-pvr1.5 → …/pli-tv-pvr1/#pli-tv-pvr1.5
+  //                  pli-tv-bu-vb-pj1:2.3 → …#tr-pli-tv-bu-vb-pj1:2.3 (segment)
+  const vt = /^\s*(pli-tv-[a-z][a-z-]*(?:\d[\d.-]*)?)\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i.exec(raw||'');
+  if(vt){
+    const ref = vt[1].toLowerCase(), seg = vt[2] || null;
+    return {nik: 'vin/tv', page: vinPage(ref), suttaId: ref, seg, ref: ref + (seg ? ':' + seg : '')};
+  }
+  // Flat (MN/DN):    mn125            → its page;  mn125:2.5 → #tr-mn125:2.5
+  // Grouped (AN/SN): an3.65           → an/an3/index.html#an3.65 (sutta is an anchor)
+  //                  sn22.59:3.2      → …/sn/sn22/index.html#tr-sn22.59:3.2
+  //                  an1.1-10         → …/an/an1/index.html#an1.1-10 (ranged sutta)
+  //                  an3              → the nipāta page top (bare book ref)
+  // KN (per-book):   ud1.1            → kn/ud/index.html#ud1.1 (the abbr IS the page)
+  //                  dhp21            → kn/dhp/index.html#21 (bare — JUMP_KN_BARE)
+  //                  dhp2.            → kn/dhp/index.html#2. (its 2nd vagga, not its 2nd verse)
+  //                  ud1.1:2.3        → kn/ud/index.html#tr-ud1.1:2.3
+  //                  mil3.1.1         → kn/mil/index.html#mil3.1.1 (deep, multi-level)
+  // Abhidhamma:      vb1              → tv_ab/vb/index.html#vb1 (section anchor)
+  //                  vb1:24.5         → tv_ab/vb/index.html#tr-vb1:24.5 (segment)
+  // Flat single-file (arv, 0-based):
+  //                  arv12            → arv/index.html#12 (topic anchor — bare, no "arv" prefix)
+  //                  arv12:3          → arv/index.html#tr-arv:12.3 (row — underlying key is
+  //                                     "<nik>:<topic>.<row>", a dot not a colon before the
+  //                                     row, unlike every other category — hence its own hash)
+  // NUMBERED CHAPTER (vagga) on a KN book page: a number with a TRAILING DOT — `dhp2.` is
+  // Dhp's second vagga, `kn/dhp/index.html#2.`. The dot is the whole point. On a book whose
+  // units are bare SuttaCentral numbers (JUMP_KN_BARE — Dhp's verses are 1…423) the chapters
+  // cannot also be 1…26, because `dhp2` already means verse 2; the dot says "the chapter",
+  // and it stays in the address so one ref names one thing. Routed for EVERY KN book rather
+  // than only the ones that have a chapter layer today, for the same reason dotted L24 refs
+  // are: a book that gains vagga groups should need no edit here, and a book without them
+  // resolves nothing and lands on its page top. See build_kn._group_by_vagga.
+  const cm = /^\s*([a-z]+(?:-[a-z]+)*)\s*(\d+)\.\s*$/i.exec(raw||'');
+  if(cm){
+    const cnik = cm[1].toLowerCase(), cn = parseInt(cm[2], 10);
+    if(!(cnik in JUMP_LIMITS)) return {err: cnik.toUpperCase()+' is not available yet'};
+    if(!JUMP_KN[cnik]) return {err: cnik.toUpperCase()+' has no numbered vaggas'};
+    if(cn < 1 || cn > JUMP_LIMITS[cnik])
+      return {err: cnik.toUpperCase()+' goes from 1 to '+JUMP_LIMITS[cnik]};
+    return {nik: 'kn', page: cnik, suttaId: cn + '.', seg: null,
+            ref: cnik + cn + '.', hash: '#' + cn + '.'};
+  }
+  const m = /^\s*([a-z]+(?:-[a-z]+)*)\s*(\d+)(?:\.(\d+(?:\.\d+)*(?:-\d+)?))?\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i.exec(raw||'');
+  if(!m) return null;
+  const nik = m[1].toLowerCase(), n = parseInt(m[2], 10), sub = m[3] || null, seg = m[4] || null;
+  if(!(nik in JUMP_LIMITS)) return {err: nik.toUpperCase()+' is not available yet'};
+  if(JUMP_FLAT[nik]){
+    if(n < 0 || n > JUMP_LIMITS[nik])
+      return {err: nik.toUpperCase()+' goes from 0 to '+JUMP_LIMITS[nik]};
+    // L24 dot-addressing: a DOTTED ref (vimt8.1.15, no colon) → the page anchor #8.1.15,
+    // a real DOM id. Dots = L24 (this system); colon = SuttaCentral (just below).
+    if(sub && !seg){
+      const dot = n + '.' + sub;
+      return {nik, page: '', suttaId: dot, seg: null, ref: nik + dot, hash: '#' + dot};
+    }
+    if(sub) return {err: nik.toUpperCase()+' refs look like '+nik+n+' or '+nik+n+':3'};
+    const hash = seg ? ('#tr-'+nik+':'+n+'.'+seg) : ('#'+n);
+    return {nik, page: '', suttaId: String(n), seg, ref: nik+n+(seg?':'+seg:''), hash};
+  }
+  if(JUMP_CMY[nik]){
+    // mn-a1 → cmy/mn/mn1/index.html ; mn-a1:2.3 → …#tr-mn-a1:2.3 (segment)
+    const c = JUMP_CMY[nik];
+    if(n < 1 || n > c.bound) return {err: nik.toUpperCase()+' goes from 1 to '+c.bound};
+    const base = nik.split('-')[0] + n;   // page folder mirrors root (mn-a1 → mn1)
+    if(sub && !seg)                       // L24 section (see the flat branch below)
+      return {nik: c.dir, page: base, suttaId: nik + n, seg: null,
+              ref: nik + n + '.' + sub, hash: '#' + n + '.' + sub};
+    if(sub) return {err: nik.toUpperCase()+' refs look like '+nik+n+' or '+nik+n+':2.5'};
+    return {nik: c.dir, page: base, suttaId: nik + n, seg,
+            ref: nik + n + (seg ? ':' + seg : ''), hash: seg ? undefined : ''};
+  }
+  if(JUMP_CMY_GROUPED[nik]){
+    // an-a3.65 → cmy/an/an3/index.html#an-a3.65 ; an-a3.65:2.4 → …#tr-an-a3.65:2.4 ;
+    // bare an-a3 → the nipāta page top. Page folder mirrors root (an-a3 → an3); the
+    // sutta anchor is the full an-a prefix (matches build_an_cmy's node ids).
+    const c = JUMP_CMY_GROUPED[nik];
+    if(n < 1 || n > c.bound) return {err: nik.toUpperCase()+' goes from 1 to '+c.bound};
+    const page = nik.split('-')[0] + n;              // an3
+    const suttaId = sub ? (nik + n + '.' + sub) : null;   // an-a3.65 (null for a bare nipāta ref)
+    return {nik: c.dir, page, suttaId, seg,
+            ref: (suttaId || (nik + n)) + (seg ? ':' + seg : '')};
+  }
+  if(JUMP_CMY_KN[nik]){
+    // kp-a5 → cmy/kn/kp/index.html#kp-a5 ; kp-a5:2.3 → …#tr-kp-a5:2.3 ; bare kp-a → book top.
+    // Page folder = the abbr (kp-a → kp); the unit anchor is the full <abbr>-a prefix
+    // (matches build_kn_cmy's group ids).
+    const c = JUMP_CMY_KN[nik];
+    if(n < 1 || n > c.bound) return {err: nik.toUpperCase()+' goes from 1 to '+c.bound};
+    const page = nik.split('-')[0];                     // kp
+    const suttaId = nik + n + (sub ? '.' + sub : '');   // kp-a5
+    return {nik: c.dir, page, suttaId, seg, ref: suttaId + (seg ? ':' + seg : '')};
+  }
+  if(JUMP_CMY_TREATISE[nik]){
+    // ONE page for the work (page = ''). Its group ids are BARE L24 dot-addresses, so a
+    // section ref drops the nik prefix: vism8 → #8 (chapter), vism8.4.16 → #8.4.16. A
+    // SEGMENT ref keeps the prefixed SC row key: vism8:216.1 → #tr-vism8:216.1.
+    const c = JUMP_CMY_TREATISE[nik];
+    if(n < 1 || n > c.bound) return {err: nik.toUpperCase()+' goes from 1 to '+c.bound};
+    const dot = n + (sub ? '.' + sub : '');             // bare L24 anchor (8 / 8.4.16)
+    const suttaId = nik + dot;                            // vism8.4.16 (row-key base for a seg)
+    return {nik: c.dir, page: '', suttaId, seg, ref: suttaId + (seg ? ':' + seg : ''),
+            hash: seg ? undefined : '#' + dot};          // no-seg → bare anchor; seg → tr-<key>
+  }
+  if(nik === 'ja-a'){
+    // ja-a265 → the nipāta page holding jātaka 265: cmy/kn/ja/ja{nip}/index.html#ja-a265
+    if(n < 1 || n > JUMP_LIMITS['ja-a'])
+      return {err: 'JA goes from 1 to ' + JUMP_LIMITS['ja-a']};
+    let nip = 0;
+    for(const r of JUMP_JA_RANGES){ if(n >= r[1] && n <= r[2]){ nip = r[0]; break; } }
+    const suttaId = 'ja-a' + n + (sub ? '.' + sub : '');
+    return {nik: 'cmy/kn/ja', page: 'ja' + nip, suttaId, seg,
+            ref: suttaId + (seg ? ':' + seg : '')};
+  }
+  // A reserved vagga 0 holds material numbered outside the root sequence — cnd puts its
+  // four verbatim Snp 5 root-verse units at 0.1-0.4 (see niddesa_l24.py) — so a DOTTED 0
+  // ref is a real address and is let through for every collection rather than an allow-list
+  // of the books that currently have one; it resolves if the outline is there and lands on
+  // the page top if not. A bare `<nik>0` is still an error.
+  const zeroOk = n === 0 && sub;
+  if((n < 1 && !zeroOk) || n > JUMP_LIMITS[nik])
+    return {err: nik.toUpperCase()+(JUMP_GROUPED[nik]?' book':'')+' goes from 1 to '+JUMP_LIMITS[nik]};
+  if(JUMP_KN[nik]){
+    const suttaId = nik + n + (sub ? '.' + sub : '');   // dhp1 / ud1.1 / mil3.1.1
+    // A BARE-anchored book (JUMP_KN_BARE — Dhp) numbers its units as SuttaCentral does and
+    // anchors them by that number alone: dhp21 → #21, dhp21.2 → #21.2. Every other KN book
+    // anchors the prefixed ref itself (#ud1.1), which is the default below. The SEGMENT form
+    // is unaffected either way — row keys keep the book prefix (#tr-dhp21:1.1).
+    const hash = (JUMP_KN_BARE[nik] && !seg) ? '#' + n + (sub ? '.' + sub : '') : undefined;
+    return {nik: 'kn', page: nik, suttaId, seg, ref: suttaId + (seg ? ':' + seg : ''), hash};
+  }
+  if(JUMP_AB[nik]){
+    const suttaId = nik + n + (sub ? '.' + sub : '');   // vb1 (Abhidhamma book section anchor)
+    return {nik: 'tv_ab', page: nik, suttaId, seg, ref: suttaId + (seg ? ':' + seg : '')};
+  }
+  if(JUMP_GROUPED[nik]){
+    const page = nik + n;                              // folder, e.g. an/an3/
+    const suttaId = sub ? page + '.' + sub : null;     // an3.65 (null for a bare book ref)
+    return {nik, page, suttaId, seg, ref: (suttaId || page) + (seg ? ':' + seg : '')};
+  }
+  if(JUMP_RANGE[nik]){
+    const bucket = JUMP_RANGE[nik];
+    const start = Math.floor((n-1)/bucket)*bucket + 1;          // 1, 101, …, 1301
+    const end = Math.min(start + bucket - 1, JUMP_LIMITS[nik]);  // 100, …, 1362 (tail clamps)
+    const suttaId = nik + n;                                     // sa42
+    const page = nik + start + '-' + end;
+    if(sub && !seg)                                    // L24 section (see the flat branch)
+      return {nik, page, suttaId, seg: null,
+              ref: suttaId + '.' + sub, hash: '#' + n + '.' + sub};
+    return {nik, page, suttaId, seg, ref: suttaId + (seg ? ':' + seg : '')};
+  }
+  if(sub && !seg){
+    // L24 section outline on a per-sutta page: mn125.2.3 → mn/mn125/index.html#125.2.3.
+    // Tried for EVERY flat collection, not a list of the ones whose outlines have shipped —
+    // the site is converting book by book and a router that has to be edited per book is a
+    // standing bug. The anchor is the sutta-prefixed ref (n + '.' + sub); resolveAnchor
+    // widens from there (bare #2.3, namespaced "<unit>/125.2.3", nearest ancestor) and
+    // falls back to the page top for a sutta that has no outline yet.
+    const base = nik + n;                              // page = the sutta itself
+    return {nik, page: base, suttaId: base, seg: null,
+            ref: base + '.' + sub, hash: '#' + n + '.' + sub};
+  }
+  if(sub) return {err: nik.toUpperCase()+' refs look like '+nik+n+' or '+nik+n+':2.5'};
+  const base = nik + n;                                // flat: the page IS the sutta
+  return {nik, page: base, suttaId: base, seg, ref: base + (seg ? ':' + seg : '')};
+}
+function flashJumpErr(text){
+  jumpInputEl.classList.add('bad');
+  jumpMsgEl.textContent = text; jumpMsgEl.classList.add('show');
+  setTimeout(()=>{ jumpInputEl.classList.remove('bad'); jumpMsgEl.classList.remove('show'); }, 2200);
+}
+function jumpToRef(ref, opts){
+  ref = (ref || '').trim();
+  // `opts.fromUrl` marks a jump the READER didn't type (the ?q= router below): it still
+  // resolves and navigates identically, but stays out of the recent-jumps list, which is
+  // meant to be a record of what this person looked up, not of links they arrived through.
+  const remember = !(opts && opts.fromUrl);
+  // IN-PAGE shortcut: on a content page (SO defined) you can omit the work's own name and
+  // jump within it — a bare L24 dot-address (`8.4.16`) → this page's anchor; an SC segment
+  // with (`8:216.1`, chapter kept) or without (`:2.1`) the chapter → this page's segment.
+  // Falls through on the homepage/help (no SO).
+  if(typeof SO !== 'undefined'){
+    let hash = null;
+    const r2l = (typeof ROW2LEAF !== 'undefined') ? ROW2LEAF : {};
+    // A TRAILING dot is allowed because it is part of a vagga address (`2.` = Dhp's second
+    // vagga, distinct from verse `2` — see parseJumpRef's chapter branch), and resolveAnchor
+    // matches it exactly, being a real node id.
+    if(/^\d+(\.\d+)*\.?$/.test(ref)){
+      // 8.4.16 → #8.4.16 (L24 anchor). Resolve through the viewer's resolveAnchor rather
+      // than a bare `ref in SO`: a KN book glues its abbreviation onto unit anchors
+      // (cnd's units are cnd0.1 … cnd5.2), so `5.2` typed ON the cnd page is not itself an
+      // id and used to fall through to the cross-page grammar and error out — while the
+      // deeper `5.2.1` worked. resolveAnchor knows every id style, so both land.
+      const node = (typeof resolveAnchor === 'function') ? resolveAnchor(ref)
+                                                        : (ref in SO ? ref : null);
+      if(node) hash = '#' + node;
+    } else if(/^\d+:\d/.test(ref)){                         // 8:216.1 → vism8:216.1 (chapter kept):
+      const key = Object.keys(r2l).find(k =>               //   nik prefix, then exactly this
+        k.endsWith(ref) && /^[a-z-]+$/.test(k.slice(0, k.length - ref.length)));
+      if(key) hash = '#tr-' + key;
+    } else if(/^:\d/.test(ref)){                            // :2.1 → first segment ending :2.1
+      const key = Object.keys(r2l).find(k => k.endsWith(ref));
+      if(key) hash = '#tr-' + key;
+    }
+    if(hash){
+      if(remember) saveJumpHist([ref].concat(loadJumpHist().filter(x=>x!==ref)));
+      jumpInputEl.value = ''; syncJumpClear();               // in-page jump doesn't reload — clear
+      closeJump();
+      if(location.hash === hash){ if(typeof jumpToHash === 'function') jumpToHash(); }
+      else location.hash = hash;                             // fires hashchange → jumpToHash
+      return;
+    }
+  }
+  const r = parseJumpRef(ref);
+  if(!r || r.err){ flashJumpErr((r&&r.err) || 'Type a ref like mn125, dn16, an3.65 or sn22.59'); return; }
+  if(remember) saveJumpHist([r.ref].concat(loadJumpHist().filter(x=>x!==r.ref)));
+  if(r.url !== undefined){ window.location.href = JUMP_ROOT + r.url; closeJump(); return; }
+  let hash = '';
+  if(r.hash !== undefined) hash = r.hash;                      // pre-built (e.g. JUMP_FLAT's)
+  else if(r.seg) hash = '#tr-' + r.suttaId + ':' + r.seg;      // segment deep link
+  else if(r.suttaId && r.suttaId !== r.page) hash = '#' + r.suttaId;  // grouped sutta anchor
+  const page = r.page ? '/' + r.page : '';                    // '' for a flat single-file book
+  window.location.href = JUMP_ROOT + '/' + r.nik + page + '/index.html' + hash;
+  closeJump();   // a SAME-PAGE hash jump doesn't reload, so close the dropdown ourselves
+}
+function renderJumpHist(){
+  const h = loadJumpHist();
+  jumpHistEl.innerHTML = '';
+  h.forEach(ref=>{
+    const d = document.createElement('div');
+    d.textContent = ref;
+    d.onmousedown = ev=>{ ev.preventDefault(); jumpToRef(ref); };
+    jumpHistEl.appendChild(d);
+  });
+  return h.length;
+}
+// ── 🐇 DROPDOWN open/close ──
+// The 🐇 button toggles a dropdown (#jumpPop) holding the input + recent-jumps
+// list; nothing is shown in the bar until then. "/" opens it from anywhere.
+const jumpPopEl = document.getElementById('jumpPop');
+function refreshJumpHist(){
+  const has = renderJumpHist() > 0;                          // (re)build the recent list
+  jumpHistEl.classList.toggle('show', has && !jumpInputEl.value);
+}
+function openJump(){
+  jumpPopEl.classList.add('show');
+  syncJumpClear();
+  refreshJumpHist();
+  jumpInputEl.focus();
+}
+function closeJump(){
+  jumpPopEl.classList.remove('show');
+  jumpHistEl.classList.remove('show');
+  jumpMsgEl.classList.remove('show');
+  jumpInputEl.classList.remove('bad');
+}
+function toggleJump(){ jumpPopEl.classList.contains('show') ? closeJump() : openJump(); }
+
+jumpInputEl.addEventListener('keydown', ev=>{
+  if(ev.key === 'Enter') jumpToRef(jumpInputEl.value);
+  else if(ev.key === 'Escape'){
+    if(jumpInputEl.value){                                   // clear, keep the dropdown open
+      ev.stopPropagation();                                  // don't let the global handler close it
+      jumpInputEl.value=''; syncJumpClear(); refreshJumpHist();
+    } else closeJump();                                      // already empty → dismiss
+  }
+});
+jumpInputEl.addEventListener('input', ()=>{ syncJumpClear(); refreshJumpHist(); });
+if(jumpClearEl) jumpClearEl.onclick = ()=>{
+  jumpInputEl.value = ''; syncJumpClear(); refreshJumpHist(); jumpInputEl.focus();
+};
+document.getElementById('jumpBtn').onclick = toggleJump;
+
+// Press "/" anywhere (outside a text field) to open the quick-jump dropdown.
+document.addEventListener('keydown', ev=>{
+  if(ev.key !== '/' || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  const t = ev.target, tag = (t.tagName||'').toLowerCase();
+  if(tag==='input' || tag==='textarea' || tag==='select' || (t && t.isContentEditable)) return;
+  ev.preventDefault();
+  openJump();
+});
+// Esc closes even when focus isn't in the box; a click outside dismisses it.
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') closeJump(); });
+document.addEventListener('click', ev=>{
+  if(jumpPopEl.classList.contains('show') && !ev.target.closest('#jump')) closeJump();
+});
+
+// ── ?q=<ref> — the 🐇 box, driven from the URL ──
+// A #hash can only deep-link WITHIN a page that's already been chosen, so a citation from
+// outside the site can't use one: whoever links to mn125 would have to know it lives at
+// mn/mn125/, an3.65 at an/an3/#3.65, dhp1 at kn/dhp/#1. ?q=<ref> hands the ref to the same
+// parseJumpRef the jump box uses, so ANY page + ?q= resolves a citation and routes itself —
+// the homepage becomes a citation resolver, and `<root>/?q=%s` registers as a browser
+// keyword search. The query string needs no server support: a static host ignores it.
+//
+// On DOMContentLoaded rather than inline, because on viewer pages this JS is inlined BEFORE
+// the init that populates SO/ROW2LEAF, renders, and calls jumpToHash() — an in-page ref
+// resolved any earlier would search an empty index, and a ?q= naming a spot on THIS page has
+// to win over the page's own #hash, so it must also land after jumpToHash has run.
+document.addEventListener('DOMContentLoaded', ()=>{
+  const q = (new URLSearchParams(location.search).get('q') || '').trim();
+  if(!q) return;
+  // Strip q BEFORE jumping. A cross-page ref navigates away and drops it anyway, but an
+  // in-page ref only sets location.hash — which would leave ?q= sitting in the address bar,
+  // so a URL the reader copied AFTERWARDS would re-run the original jump on load and
+  // override the hash it appears to point at.
+  try{
+    const u = new URL(location.href);
+    u.searchParams.delete('q');
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  }catch(e){/* replaceState is refused on file:// in some browsers — still jump */}
+  // Put the ref in the box and open the dropdown BEFORE jumping: a ref that resolves closes
+  // it (or navigates away) in this same tick, and one that doesn't is left on screen beside
+  // flashJumpErr's complaint — which renders inside the pop and would otherwise be invisible,
+  // making a mistyped citation link look like a page that simply ignored it.
+  jumpInputEl.value = q; syncJumpClear();
+  openJump();
+  jumpToRef(q, {fromUrl: true});
+  // Resolved in-page → the pop is shut, but focus would still sit in the jump input and eat
+  // the reader's first keystrokes (and the viewer's "/" and Esc bindings).
+  if(!jumpPopEl.classList.contains('show')) jumpInputEl.blur();
+});
+
+// ── THEME + FONT PREFS (shared with the sutta viewer via debabel.viewer.v1) ──
+const PREFS_KEY = 'debabel.viewer.v1';
+const PREFS_FS_MIN = 11, PREFS_FS_MAX = 22;
+let prefTheme = 'light', prefFs = 15;
+function loadPrefs(){
+  try{
+    const s = JSON.parse(localStorage.getItem(PREFS_KEY)) || {};
+    if(s.theme==='dark'||s.theme==='light') prefTheme = s.theme;
+    if(typeof s.fs==='number') prefFs = Math.min(PREFS_FS_MAX, Math.max(PREFS_FS_MIN, s.fs));
+  }catch(e){}
+}
+function savePrefs(){
+  try{
+    let s = {};
+    try{ s = JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; }catch(e){ s = {}; }
+    s.theme = prefTheme; s.fs = prefFs;   // merge — never clobber colsBy/sidebar
+    localStorage.setItem(PREFS_KEY, JSON.stringify(s));
+  }catch(e){}
+}
+function applyPrefs(){
+  document.documentElement.setAttribute('data-theme', prefTheme);
+  document.documentElement.style.fontSize = prefFs + 'px';
+  const tb = document.getElementById('siteThemeBtn');
+  if(tb) tb.textContent = prefTheme==='dark'?'☾ Dark':'☀ Light';
+}
+function siteToggleTheme(){ prefTheme = prefTheme==='dark'?'light':'dark'; savePrefs(); applyPrefs(); }
+function siteAdjustFont(d){
+  prefFs = Math.min(PREFS_FS_MAX, Math.max(PREFS_FS_MIN, prefFs + d));
+  savePrefs(); applyPrefs();
+}
+// ── ⚙ SETTINGS POPOVER ──
+function siteToggleSettings(){
+  document.getElementById('siteSettingsPop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('siteSettingsPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteSettingsWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('siteSettingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+// ── ⋮ MORE POPOVER (Help) ──
+function siteToggleMore(){
+  document.getElementById('siteMorePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('siteMorePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteMoreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('siteMorePop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+loadPrefs(); applyPrefs();
+
+
+function ixSetAll(expand){
+  document.querySelectorAll('.ix-grp').forEach(function(g){
+    g.classList.toggle('collapsed', !expand);
+  });
+}
+function ixToggleAll(expand){
+  ixSetAll(expand);
+  var c=document.getElementById('ixCollapse'), e=document.getElementById('ixExpand');
+  if(c) c.classList.toggle('on', !expand);
+  if(e) e.classList.toggle('on', expand);
+}
+function ixToggle(h){ var g=h.closest('.ix-grp'); if(g) g.classList.toggle('collapsed'); }
+function ixKey(ev,h){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ixToggle(h); } }
+
+// ── "∥ EBT" parallels modal ───────────────────────────────────────────────
+// Each button carries its own payload (data-ebt, a small JSON blob built by
+// index_cards._ebt_button) — no page-global data registry needed.
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpen(btn){
+  var data;
+  try{ data = JSON.parse(btn.getAttribute('data-ebt')); }catch(e){ data = null; }
+  if(!data) return;
+  var ref = btn.getAttribute('data-ebt-ref') || '';
+  var html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  var groups = [['full','Parallels'],['resembling','Resembling passages']];
+  var any = false;
+  groups.forEach(function(g){
+    var items = data[g[0]];
+    if(!items || !items.length) return;
+    any = true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(function(it){
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden = false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden = true;
+}
+document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape'){ ebtClose(); } });
+
+(function(){
+  function apply(){
+    var sel=document.getElementById('translatorFilter'); if(!sel) return;
+    var t=sel.value;  // '' = All
+    var total=0, have=0, locked=0;
+    document.querySelectorAll('.ix-line').forEach(function(line){
+      total++;
+      var has=(line.getAttribute('data-has')||'').split(' ');
+      var lock=(line.getAttribute('data-lock')||'').split(' ');
+      line.style.display=(!t || has.indexOf(t)>=0)?'':'none';
+      if(has.indexOf(t)>=0) have++;
+      if(lock.indexOf(t)>=0) locked++;
+      var badge=line.querySelector('.ix-lock');
+      if(badge){
+        var on = t ? (lock.indexOf(t)>=0) : (lock[0]!=='');
+        badge.style.display = on ? '' : 'none';
+      }
+    });
+    document.querySelectorAll('.ix-grp').forEach(function(g){
+      var any=Array.prototype.some.call(g.querySelectorAll('.ix-line'),
+        function(l){return l.style.display!=='none';});
+      g.style.display=any?'':'none';
+    });
+    var st=document.getElementById('ixStats');
+    if(st){
+      st.textContent = t
+        ? (sel.options[sel.selectedIndex].text+': '+have+'/'+total+' suttas, '+locked+' locked')
+        : (st.getAttribute('data-all')||'');
+    }
+  }
+  window.translatorFilterApply=apply;
+  window.addEventListener('pageshow', function(e){
+    var sel=document.getElementById('translatorFilter');
+    if(sel && !e.persisted){ sel.value=''; }  // fresh load → All; back/fwd → keep
+    apply();
+  });
+})();
+
+</script>
+
+
+</body></html>
