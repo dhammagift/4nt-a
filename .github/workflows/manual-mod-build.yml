@@ -1,0 +1,114 @@
+name: Manual Mod Build
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *' # Запуск каждый день в 03:00 UTC
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manual-mod-build
+  cancel-in-progress: false
+
+jobs:
+  # Сначала синхронизируем main с upstream
+  sync_main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Configure git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream and fetch
+        run: |
+          git remote add upstream https://github.com/frankksutta/s.4nt.git || true
+          git fetch upstream --depth=1
+
+      - name: Merge upstream/main into main and push
+        run: |
+          git checkout main
+          # Попытка fast-forward, иначе создаём merge-коммит
+          if git merge --ff-only upstream/main; then
+            echo "Fast-forwarded main from upstream"
+          else
+            git merge upstream/main --no-edit || true
+          fi
+          git push origin main
+
+  # Затем собираем ветку mod (нуждается на результат sync_main)
+  build_mod:
+    needs: sync_main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mod branch
+        uses: actions/checkout@v4
+        with:
+          ref: mod
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Clean old files
+        run: |
+          # Удаляем всё в рабочей директории, кроме .git
+          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} +
+
+      - name: Download upstream snapshot
+        run: |
+          wget -qO main.zip https://github.com/frankksutta/s.4nt/archive/refs/heads/main.zip
+          unzip -q main.zip
+          cp -a s.4nt-main/* .
+          rm -rf main.zip s.4nt-main || true
+
+      - name: Prepare external structure
+        run: |
+          mkdir -p ../scripts/4nt
+          wget -qO enrich4nt.js https://raw.githubusercontent.com/dhammagift/dg/main/scripts/4nt/enrich4nt.js
+          wget -qO logo4nt_plain.png https://raw.githubusercontent.com/dhammagift/dg/main/assets/img/logo4nt_plain.png || true
+          cp -f logo4nt_plain.png favicon.png || true
+          wget -qO ../scripts/4nt/.gitignore https://raw.githubusercontent.com/dhammagift/dg/main/scripts/4nt/.gitignore || true
+          wget -qO README.md https://raw.githubusercontent.com/dhammagift/dg/main/scripts/4nt/README.md || true
+
+      - name: Install dependencies
+        run: npm install cheerio
+
+      - name: Execute script
+        run: node enrich4nt.js .
+
+      - name: Commit and push to mod
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Building update from upstream" || echo "No changes to commit"
+          git push origin mod || echo "Push to mod failed"
+
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Add README to main branch and push
+        run: |
+          wget -qO README.md https://raw.githubusercontent.com/dhammagift/dg/main/scripts/4nt/README.md || true
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Updated README.md" || echo "No changes to commit"
+          git push origin main || echo "Push to main failed"
